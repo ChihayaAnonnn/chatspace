@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 父项目的坐标 -->
+    <groupId>top.iceclean</groupId>
+    <artifactId>chatspace</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.5</version>
+        <relativePath/> <!-- 从远程仓库拉取 -->
+    </parent>
+
+    <modules>
+        <!-- 声明子模块 -->
+        <module>chatspace-cache</module>
+        <module>chatspace-infrastructure</module>
+        <module>chatspace-feign</module>
+        <module>chatspace-friend</module>
+        <module>chatspace-gateway</module>
+        <module>chatspace-group</module>
+        <module>chatspace-message</module>
+        <module>chatspace-realtime</module>
+        <module>chatspace-session</module>
+        <module>chatspace-user</module>
+        <!-- 还有别的模块就继续加 -->
+    </modules>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 统一管理依赖版本，可以在子模块直接引用，不用写版本 -->
+            <!-- 例如 -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>2023.0.1.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.4.5</version> <!-- 指定你要用的版本 -->
+            </plugin>
+        </plugins>
+    </build>
+</project>

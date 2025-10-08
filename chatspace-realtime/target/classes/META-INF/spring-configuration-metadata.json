@@ -1,0 +1,89 @@
+{
+  "groups": [
+    {
+      "name": "chatspace.websocket",
+      "type": "top.iceclean.chatspace.realtime.server.ServerProperties",
+      "sourceType": "top.iceclean.chatspace.realtime.server.ServerProperties"
+    },
+    {
+      "name": "chatspace.websocket.register",
+      "type": "top.iceclean.chatspace.realtime.server.ServerProperties$Register",
+      "sourceType": "top.iceclean.chatspace.realtime.server.ServerProperties",
+      "sourceMethod": "public top.iceclean.chatspace.realtime.server.ServerProperties.Register getRegister() "
+    },
+    {
+      "name": "chatspace.websocket.ssl",
+      "type": "top.iceclean.chatspace.realtime.server.ServerProperties$Ssl",
+      "sourceType": "top.iceclean.chatspace.realtime.server.ServerProperties",
+      "sourceMethod": "public top.iceclean.chatspace.realtime.server.ServerProperties.Ssl getSsl() "
+    },
+    {
+      "name": "chatspace.websocket.timeout",
+      "type": "top.iceclean.chatspace.realtime.server.ServerProperties$Timeout",
+      "sourceType": "top.iceclean.chatspace.realtime.server.ServerProperties",
+      "sourceMethod": "public top.iceclean.chatspace.realtime.server.ServerProperties.Timeout getTimeout() "
+    }
+  ],
+  "properties": [
+    {
+      "name": "chatspace.websocket.register.access-space",
+      "type": "java.util.List<java.lang.Integer>",
+      "description": "受理的空间",
+      "sourceType": "top.iceclean.chatspace.realtime.server.ServerProperties$Register"
+    },
+    {
+      "name": "chatspace.websocket.register.ip",
+      "type": "java.lang.String",
+      "description": "服务注册的 IP 地址",
+      "sourceType": "top.iceclean.chatspace.realtime.server.ServerProperties$Register"
+    },
+    {
+      "name": "chatspace.websocket.register.max-user-num",
+      "type": "java.lang.Integer",
+      "description": "最大负载用户",
+      "sourceType": "top.iceclean.chatspace.realtime.server.ServerProperties$Register"
+    },
+    {
+      "name": "chatspace.websocket.register.nacos-ip",
+      "type": "java.lang.String",
+      "description": "Nacos 的 IP 地址",
+      "sourceType": "top.iceclean.chatspace.realtime.server.ServerProperties$Register"
+    },
+    {
+      "name": "chatspace.websocket.register.port",
+      "type": "java.lang.Integer",
+      "description": "服务注册的端口号",
+      "sourceType": "top.iceclean.chatspace.realtime.server.ServerProperties$Register"
+    },
+    {
+      "name": "chatspace.websocket.ssl.file",
+      "type": "java.lang.String",
+      "description": "SSL 的证书位置和密码",
+      "sourceType": "top.iceclean.chatspace.realtime.server.ServerProperties$Ssl"
+    },
+    {
+      "name": "chatspace.websocket.ssl.password",
+      "type": "java.lang.String",
+      "sourceType": "top.iceclean.chatspace.realtime.server.ServerProperties$Ssl"
+    },
+    {
+      "name": "chatspace.websocket.timeout.idle",
+      "type": "java.lang.Integer",
+      "description": "所有超时，无",
+      "sourceType": "top.iceclean.chatspace.realtime.server.ServerProperties$Timeout"
+    },
+    {
+      "name": "chatspace.websocket.timeout.read",
+      "type": "java.lang.Integer",
+      "description": "读超时，3 min",
+      "sourceType": "top.iceclean.chatspace.realtime.server.ServerProperties$Timeout"
+    },
+    {
+      "name": "chatspace.websocket.timeout.write",
+      "type": "java.lang.Integer",
+      "description": "写超时，无",
+      "sourceType": "top.iceclean.chatspace.realtime.server.ServerProperties$Timeout"
+    }
+  ],
+  "hints": []
+}

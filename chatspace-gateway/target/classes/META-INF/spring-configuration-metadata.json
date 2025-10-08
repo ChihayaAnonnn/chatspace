@@ -1,0 +1,23 @@
+{
+  "groups": [
+    {
+      "name": "consistent-hashing",
+      "type": "top.iceclean.chatspace.gateway.loadbalance.ConsistentHashingProperties",
+      "sourceType": "top.iceclean.chatspace.gateway.loadbalance.ConsistentHashingProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "consistent-hashing.http-urls",
+      "type": "java.util.List<java.lang.String>",
+      "sourceType": "top.iceclean.chatspace.gateway.loadbalance.ConsistentHashingProperties"
+    },
+    {
+      "name": "consistent-hashing.websocket-urls",
+      "type": "java.util.List<java.lang.String>",
+      "description": "需要使用一致性哈希负载算法分配服务节点的请求",
+      "sourceType": "top.iceclean.chatspace.gateway.loadbalance.ConsistentHashingProperties"
+    }
+  ],
+  "hints": []
+}

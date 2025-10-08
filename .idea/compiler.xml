@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="chatspace-message" />
+        <module name="chatspace-friend" />
+        <module name="chatspace-gateway" />
+        <module name="chatspace-feign" />
+        <module name="chatspace-infrastructure" />
+        <module name="chatspace-realtime" />
+        <module name="chatspace-group" />
+        <module name="chatspace-session" />
+        <module name="chatspace-cache" />
+        <module name="chatspace-user" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="chatspace-cache" options="-parameters" />
+      <module name="chatspace-feign" options="-parameters" />
+      <module name="chatspace-friend" options="-parameters" />
+      <module name="chatspace-gateway" options="-parameters" />
+      <module name="chatspace-group" options="-parameters" />
+      <module name="chatspace-infrastructure" options="-parameters" />
+      <module name="chatspace-message" options="-parameters" />
+      <module name="chatspace-realtime" options="-parameters" />
+      <module name="chatspace-session" options="-parameters" />
+      <module name="chatspace-user" options="-parameters" />
+    </option>
+  </component>
+</project>

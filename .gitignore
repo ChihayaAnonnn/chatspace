@@ -1,0 +1,19 @@
+# Maven 构建输出目录
+target/
+
+# 前端构建输出目录
+chatspace-static/build/
+
+# Gradle 缓存目录
+.gradle/
+
+# IntelliJ IDEA 配置
+.idea/
+*.iml
+
+# VS Code 配置
+.vscode/
+
+# JVM 崩溃日志和回放日志
+hs_err_pid*.log
+replay_pid*.log

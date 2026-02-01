@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "./static/css/main.60f121d1.css",
+    "main.js": "./static/js/main.26189bcb.js",
+    "static/js/641.de3737a7.chunk.js": "./static/js/641.de3737a7.chunk.js",
+    "static/media/苹方黑体-准-简.ttf": "./static/media/苹方黑体-准-简.fba8470f357075fc3481.ttf",
+    "static/media/key.jpg": "./static/media/key.bd3a7af9bbb22a3864b4.jpg",
+    "static/media/Chat.svg": "./static/media/Chat.dca0fd2641c975346b4498dd82ee225d.svg",
+    "static/media/random (2).svg": "./static/media/random (2).87c6ac2a37a880812aaab1abad447c13.svg",
+    "static/media/random (1).svg": "./static/media/random (1).5aa857799203d236ddd979b3d0b86957.svg",
+    "static/media/world.svg": "./static/media/world.3bc4a51f7ce8ce888941b0f9b4bf02b4.svg",
+    "static/media/space.svg": "./static/media/space.567fb3ea4de8d6613f79b548b67d9a82.svg",
+    "static/media/group.svg": "./static/media/group.7f7266c944bb2425f070a5511b3b5886.svg",
+    "index.html": "./index.html",
+    "main.60f121d1.css.map": "./static/css/main.60f121d1.css.map",
+    "main.26189bcb.js.map": "./static/js/main.26189bcb.js.map",
+    "641.de3737a7.chunk.js.map": "./static/js/641.de3737a7.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.60f121d1.css",
+    "static/js/main.26189bcb.js"
+  ]
+}

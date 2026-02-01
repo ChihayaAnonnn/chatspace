@@ -48,7 +48,7 @@ public class SpaceProcessor {
         spaceInitVO.setSpace(groupClient.getSpaceData(siteVO.getSpaceId()));
         spaceInitVO.setUserSite(siteVO);
         log.info("推送空间初始化消息：{}", siteVO);
-        BaseProcessor.castMessage(WsType.SPACE_INIT, siteVO.getUser().getUserId(), spaceInitVO);
+        BaseProcessor.castMessage(WsType.SPACE_INIT, siteVO.getUserId(), spaceInitVO);
     }
 
     public void sendZoneInitMessage(int userId, List<ZoneVO> zoneList, List<Integer> zoneRemoveList) {
@@ -64,21 +64,7 @@ public class SpaceProcessor {
      * @param userIdSet 发生更改的用户（一连串用户）
      */
     public void changeSiteState(int userId, WsType wsType, Set<Integer> userIdSet) {
-        if (userIdSet != null) {
-            // 维护该用户的视野集合，以及与该用户在同一个节点的用户的存在集合
-//            switch (wsType) {
-//                case SITE_ADD:
-//                    SessionRepository.get(userId).getVisionSet().addAll(userIdSet);
-//                    userIdSet.stream().map(SessionRepository::get).filter(Objects::nonNull)
-//                            .forEach(session -> session.getExistSet().add(userId));
-//                    break;
-//                case SITE_REMOVE:
-//                    SessionRepository.get(userId).getVisionSet().removeAll(userIdSet);
-//                    userIdSet.stream().map(SessionRepository::get).filter(Objects::nonNull)
-//                            .forEach(session -> session.getExistSet().add(userId));
-//                    break;
-//                default:
-//            }
+        if (userIdSet != null && !userIdSet.isEmpty()) {
             // 与用户不在同一个节点的，视野集合推迟到接收到转发消息时维护
             BaseProcessor.castMessage(wsType, new DataGenerator.SiteChange(userId, userIdSet));
         }
@@ -92,21 +78,7 @@ public class SpaceProcessor {
      */
     public void changeSiteState(Set<Integer> userIdSet, WsType wsType, int userId) {
         // 发送给目标用户该用户出现的消息
-        if (userIdSet != null) {
-            // 维护该用户的存在集合，以及与该用户在同一个节点的用户的视野集合
-//            switch (wsType) {
-//                case SITE_ADD:
-//                    SessionRepository.get(userId).getExistSet().addAll(userIdSet);
-//                    userIdSet.stream().map(SessionRepository::get).filter(Objects::nonNull)
-//                            .forEach(session -> session.getVisionSet().add(userId));
-//                    break;
-//                case SITE_REMOVE:
-//                    SessionRepository.get(userId).getExistSet().removeAll(userIdSet);
-//                    userIdSet.stream().map(SessionRepository::get).filter(Objects::nonNull)
-//                            .forEach(session -> session.getVisionSet().add(userId));
-//                    break;
-//                default:
-//            }
+        if (userIdSet != null && !userIdSet.isEmpty()) {
             // 与用户不在同一个节点的，视野集合推迟到接收到转发消息时维护
             BaseProcessor.castMessage(wsType, new DataGenerator.SiteChange(userIdSet, userId));
         }
@@ -143,9 +115,20 @@ public class SpaceProcessor {
      * 用户从一个或多个嵌套的子区域离开
      * 并进入当前所处的父级区域
      * @param userId 用户 ID
+     * @param zoneOutList 退出的多个嵌套的子区域 ID（都需要移除）
+     * @param zoneRemoveList 用户上一个状态所在的区域的所有子区域（都需要移除）
      */
-    public void zoneOut(int userId, ZoneInOutVO.ZoneOut zoneOutVO) {
-        // 向用户发送退出区域的通知
+    public void zoneOut(int userId, List<Integer> zoneOutList, List<Integer> zoneRemoveList) {
+        // 构造区域退出消息（从哪些区域离开了）
+        ZoneInOutVO.ZoneOut zoneOutVO;
+        if (zoneOutList == null) {
+            Integer tempZoneIn = zoneCache.cleanTempZoneIn(userId);
+            zoneOutVO = new ZoneInOutVO.ZoneOut(tempZoneIn == null ? Collections.emptyList() :
+                    Collections.singletonList(Math.abs(tempZoneIn)));
+        } else {
+            zoneOutVO = new ZoneInOutVO.ZoneOut(zoneOutList, zoneRemoveList);
+        }
+        // 推送区域退出消息，列表为空即为退出临时区域，直接发送消息给用户即可（取绝对值兼容禁止区域）
         BaseProcessor.castMessage(WsType.ZONE_OUT, userId, zoneOutVO);
     }
 

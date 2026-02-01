@@ -122,7 +122,7 @@ public class SpaceUnit {
     /** 更新用户坐标，并返回用户原先所在的网格 */
     public static GridUnit updateSite(int userId, SiteDTO siteDTO) {
         GridUnit grid = getGrid(userId);
-        SITE_MAP.get(userId).updateSite(siteDTO);
+        SITE_MAP.get(userId).updateSite(new SiteVO(siteDTO, grid.getSpaceId(), userId));
         return grid;
     }
 

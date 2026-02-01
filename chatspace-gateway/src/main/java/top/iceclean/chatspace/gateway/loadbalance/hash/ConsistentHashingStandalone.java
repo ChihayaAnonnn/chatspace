@@ -261,10 +261,10 @@ public class ConsistentHashingStandalone implements ConsistentHashing {
     }
 
     @Override
-    public void userRemove(Object userId) {
+    public void userRemove(String serverId, Object userId) {
         UserEntry remove = userRing.remove(Integer.parseInt(userId.toString()));
         if (remove != null) {
-            serverMap.get(remove.getServerId()).userRemove();
+            serverMap.get(serverId).userRemove();
         }
     }
 }

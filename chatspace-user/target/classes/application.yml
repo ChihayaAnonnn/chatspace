@@ -1,0 +1,14 @@
+
+server:
+  port: ${SERVER_PORT:19011}
+  servlet:
+    context-path: /space
+
+spring:
+  profiles:
+    active: proudce
+    include: shared
+
+management:
+  server:
+    port: 10011

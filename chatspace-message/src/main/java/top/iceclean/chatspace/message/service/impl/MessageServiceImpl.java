@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.transaction.annotation.Transactional;
 import top.iceclean.chatspace.cache.UserCache;
+import top.iceclean.chatspace.infrastructure.auth.UserAuth;
+import top.iceclean.chatspace.infrastructure.constant.SessionType;
 import top.iceclean.chatspace.message.mapper.MessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,7 +48,9 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Response getChatHistory(int userId, int sessionId, int page) {
+    public Response getChatHistory(SessionType type, int targetId, int page) {
+        int userId = UserAuth.getUserId();
+        int sessionId = sessionClient.findSessionId(type.value(), targetId);
         // 查询指定会话的历史消息
         List<Message> messageList = messageMapper.selectPage(
                 new Page<>(page, 10),

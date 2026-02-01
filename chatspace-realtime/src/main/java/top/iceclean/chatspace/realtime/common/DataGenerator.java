@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.iceclean.chatspace.cache.*;
+import top.iceclean.chatspace.infrastructure.common.Monitor;
 import top.iceclean.chatspace.infrastructure.constant.MessageType;
 import top.iceclean.chatspace.infrastructure.constant.SessionType;
 import top.iceclean.chatspace.infrastructure.dto.MessageDTO;
 import top.iceclean.chatspace.infrastructure.po.SessionRequest;
-import top.iceclean.chatspace.infrastructure.po.Zone;
 import top.iceclean.chatspace.infrastructure.vo.*;
 import top.iceclean.feign.*;
 
@@ -218,8 +218,7 @@ public class DataGenerator {
             targetSet.add(userId);
 
             // 而消息的内容是集合中用户对位置信息
-            infoSet = new HashSet<>(userIdSet.size());
-            userIdSet.forEach(uId -> infoSet.add(SessionRepository.getSite(uId)));
+            infoSet = SessionRepository.batchGetSite(userIdSet);
         }
 
         public SiteChange(Set<Integer> userIdSet, int userId) {

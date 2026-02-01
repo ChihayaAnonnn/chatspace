@@ -23,9 +23,12 @@ public class FileConst {
     }
 
     /** 文件的上传路径 */
-    public static final String ROOT_PATH = "/home/iceclean/project/ChatSpace/static/";
+    public static final String ROOT_PATH = "/home/iceclean/project/ChatSpace/static/build";
     public static final String AVATAR_PATH = "img/avatar/";
     public static final String CHAT_IMG_PATH = "img/chat/";
+    /** 华为云 OSS 桶名称 */
+    public static final String BUCKET_NAME = "chat-space";
+    public static final String OBJECT_PATH = "img/avatar";
 
     /** 默认标识 */
     public static final String DEFAULT_AVATAR = "../img/avatar/default.png";

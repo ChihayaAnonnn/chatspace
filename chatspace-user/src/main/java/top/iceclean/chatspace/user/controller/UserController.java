@@ -38,6 +38,14 @@ public class UserController {
         this.mailUtils = mailUtils;
     }
 
+    /**
+     * 新手登录（换一个默认头像）
+     */
+    @GetMapping("/novice")
+    public void noviceComing() {
+        userService.noviceComing();
+    }
+
     @PostMapping("/login")
     public Object login(@Validated(UserDTO.Login.class) UserDTO userDTO) {
         return userService.login(userDTO.getUserName() != null ?

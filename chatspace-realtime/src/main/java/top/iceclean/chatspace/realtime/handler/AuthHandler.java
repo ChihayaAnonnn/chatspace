@@ -5,16 +5,9 @@ import io.netty.channel.*;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
-import top.iceclean.chatspace.cache.UserCache;
 import top.iceclean.chatspace.infrastructure.utils.JwtUtils;
-import top.iceclean.chatspace.realtime.server.ServerProperties;
-
-import java.util.Arrays;
 
 
 /**
@@ -54,6 +47,8 @@ public class AuthHandler {
                 String userId = JwtUtils.parseJWT(token).getSubject();
                 HandlerHelper.setUserId(ctx, Integer.parseInt(userId));
                 log.info("用户请求连接 id: " + HandlerHelper.getUserId(ctx));
+                // 设置状态为正在初始化
+                HandlerHelper.setInitState(ctx, false);
                 super.channelRead(ctx, msg);
             } catch (NullPointerException e) {
                 log.warn("用户 token 为空！");

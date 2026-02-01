@@ -1,0 +1,13 @@
+
+version: '3.8'
+services:
+  session1:
+    build:
+      args:
+        NACOS_IP: $NACOS_IP
+        HOST_IP: $HOST_IP
+        SERVER_PORT: 19015
+      context: ./chatspace-session
+      dockerfile: Dockerfile
+    ports:
+      - "19015:19015"

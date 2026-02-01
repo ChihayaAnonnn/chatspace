@@ -3,16 +3,9 @@ package top.iceclean.chatspace.group.controller.admin;
 import org.springframework.web.bind.annotation.*;
 import top.iceclean.chatspace.group.server.BoxService;
 import top.iceclean.chatspace.infrastructure.annotation.AdminCheck;
-import top.iceclean.chatspace.infrastructure.constant.ItemType;
 import top.iceclean.chatspace.infrastructure.constant.ResponseStatusEnum;
-import top.iceclean.chatspace.infrastructure.constant.ZoneType;
-import top.iceclean.chatspace.infrastructure.dto.ZoneDTO;
-import top.iceclean.chatspace.infrastructure.po.Box;
-import top.iceclean.chatspace.infrastructure.po.Site;
 import top.iceclean.chatspace.infrastructure.po.Zone;
 import top.iceclean.chatspace.infrastructure.pojo.Response;
-
-import java.util.Map;
 
 /**
  * 管理员的箱子区域服务

@@ -1,73 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- 父项目的坐标 -->
     <groupId>top.iceclean</groupId>
     <artifactId>chatspace</artifactId>
-    <version>1.0</version>
     <packaging>pom</packaging>
+    <version>1.0</version>
+    <modules>
+        <module>chatspace-gateway</module>
+        <module>chatspace-user</module>
+        <module>chatspace-feign</module>
+        <module>chatspace-group</module>
+        <module>chatspace-realtime</module>
+        <module>chatspace-message</module>
+        <module>chatspace-friend</module>
+        <module>chatspace-session</module>
+        <module>chatspace-infrastructure</module>
+        <module>chatspace-cache</module>
+    </modules>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.5</version>
-        <relativePath/> <!-- 从远程仓库拉取 -->
+        <groupId>org.springframework.boot</groupId>
+        <version>2.6.4</version>
     </parent>
-
-    <modules>
-        <!-- 声明子模块 -->
-        <module>chatspace-cache</module>
-        <module>chatspace-infrastructure</module>
-        <module>chatspace-feign</module>
-        <module>chatspace-friend</module>
-        <module>chatspace-gateway</module>
-        <module>chatspace-group</module>
-        <module>chatspace-message</module>
-        <module>chatspace-realtime</module>
-        <module>chatspace-session</module>
-        <module>chatspace-user</module>
-        <!-- 还有别的模块就继续加 -->
-    </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-cloud.version>2025.0.0</spring-cloud.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <!--负载均衡-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- openGauss 的 postgres 驱动 -->
+        <dependency>
+            <groupId>org.opengauss</groupId>
+            <artifactId>opengauss-jdbc</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+    </dependencies>
 
     <dependencyManagement>
         <dependencies>
-            <!-- 统一管理依赖版本，可以在子模块直接引用，不用写版本 -->
-            <!-- 例如 -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
+                <version>2021.0.4</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!--nacos的管理依赖-->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                <version>2023.0.1.0</version>
+                <version>2.2.5.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>3.4.5</version> <!-- 指定你要用的版本 -->
-            </plugin>
-        </plugins>
-    </build>
+    <!-- 项目构建插件配置信息 -->
+<!--    <build>-->
+<!--        <plugins>-->
+<!--            &lt;!&ndash; jar打包插件 &ndash;&gt;-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-jar-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    &lt;!&ndash; 打包输出指定路径 &ndash;&gt;-->
+<!--                    <outputDirectory>D:\1_IceCleanDevelop\2_Java\1_Java_Practices\13_SpringCloud\ChatSpace_v2\deploy</outputDirectory>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+
+<!--            &lt;!&ndash; 编译版本控制&ndash;&gt;-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <encoding>utf-8</encoding>-->
+<!--                    <source>1.8</source>-->
+<!--                    <target>1.8</target>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+
+<!--            &lt;!&ndash;跳过测试&ndash;&gt;-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <skipTests>true</skipTests>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+
+<!--            &lt;!&ndash;依赖库统一打包后放到指定目录&ndash;&gt;-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-dependency-plugin</artifactId>-->
+<!--                <version>2.10</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>copy-dependencies</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>copy-dependencies</goal>-->
+<!--                        </goals>-->
+<!--                        &lt;!&ndash; 依赖库指定输出目录&ndash;&gt;-->
+<!--                        <configuration>-->
+<!--                            <outputDirectory>D:\1_IceCleanDevelop\2_Java\1_Java_Practices\13_SpringCloud\ChatSpace_v2\deploy\lib</outputDirectory>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+<!--    </build>-->
 </project>

@@ -3,7 +3,6 @@ package top.iceclean.chatspace.realtime.processor.site;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import top.iceclean.chatspace.infrastructure.po.Zone;
 import top.iceclean.chatspace.infrastructure.vo.SiteVO;
 import top.iceclean.chatspace.infrastructure.vo.ZoneVO;
 import top.iceclean.chatspace.realtime.common.SessionRepository;
@@ -65,7 +64,7 @@ public class SiteProcessorByOpenGauss {
                 // 将用户从区域中移出
                 groupClient.exitGroup(userId, oldZone);
                 // 发送离开区域消息
-                spaceProcessor.zoneOut(userId, null);
+                spaceProcessor.zoneOut(userId, null, null);
             }
 
             // 新位置不为空，则处理区域加入
@@ -142,7 +141,7 @@ public class SiteProcessorByOpenGauss {
         // 解析消息，获取旧空间点并更新为新的空间点
         SiteDTO siteDTO = JSONObject.parseObject(content, SiteDTO.class);
         SpacePoint oldPoint = SpacePoint.get(siteVO);
-        siteVO.updateSite(siteDTO);
+        siteVO.updateSite(new SiteVO(siteDTO, spaceId, userId));
         SpacePoint newPoint = SpacePoint.get(siteVO);
 
         System.out.println("========= 更新用户坐标：" + userId);

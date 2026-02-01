@@ -1,0 +1,66 @@
+spring:
+  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://119.91.208.25:5432/chat_space_v2?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
+#    username: iceclean2
+#    password: IceClean222
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://119.91.208.25:3306/chat_space_v2?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
+    username: root
+    password: jingyin
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      filters: [stat,wall]
+      web-stat-filter:
+        enabled: on
+        url-pattern: /*
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+        session-stat-enable: true
+      stat-view-servlet:
+        enabled: on
+        url-pattern: /druid/*
+        reset-enable: false
+        login-password: aaa
+        login-username: iceclean
+        allow: 127.0.0.1
+  redis:
+    host: 10.0.24.17
+    port: 6000
+    password: Xiaoche423
+    lettuce:
+      pool:
+        max-idle: 16
+        max-active: 8
+        max-wait: 10000
+        min-idle: 8
+  mail:
+    username: 1419263382@qq.com
+    password: qimywefiificghah
+    host: smtp.qq.com
+    port: 465
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
+          socketFactory.class: javax.net.ssl.SSLSocketFactory
+mybatis:
+  configuration:
+    cache-enabled: true
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
+# 全局监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    tags:
+      application: ${spring.application.name}

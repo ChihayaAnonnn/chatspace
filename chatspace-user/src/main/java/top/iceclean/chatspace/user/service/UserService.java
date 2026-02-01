@@ -30,6 +30,11 @@ public interface UserService {
     Response register(UserDTO userDTO);
 
     /**
+     * 新手登录（换一个默认头像）
+     */
+    void noviceComing();
+
+    /**
      * 修改当前用户的头像
      * @param avatar 头像文件数据
      * @return 上传的头像路径

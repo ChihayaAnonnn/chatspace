@@ -60,6 +60,9 @@ public class UserProcessor {
             // 设置用户所在服务节点
             userCache.setServerNode(userId, properties.getServerId());
             return userCache.getUserById(userId);
+        } else {
+            // 移除用户信息
+            // userCache.removeLoginCache(userId);
         }
         return null;
     }

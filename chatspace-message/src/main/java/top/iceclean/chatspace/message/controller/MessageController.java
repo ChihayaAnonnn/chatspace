@@ -1,9 +1,9 @@
 package top.iceclean.chatspace.message.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import top.iceclean.chatspace.infrastructure.constant.SessionType;
 import top.iceclean.chatspace.message.service.MessageService;
 
 /**
@@ -16,18 +16,20 @@ import top.iceclean.chatspace.message.service.MessageService;
 @RequestMapping("/session")
 public class MessageController {
 
-    @Autowired
-    private MessageService messageService;
+    private final MessageService messageService;
+
+    public MessageController(MessageService messageService) {
+        this.messageService = messageService;
+    }
 
     /**
      * 获取用户在某个会话的历史消息
-     * @param userId 用户 ID
-     * @param sessionId 会话 ID
+     * @param friendId 好友 ID
      * @param page 聊天记录的页数
      * @return 历史消息列表
      */
-    @GetMapping("/history")
-    public Object getChatHistory(int userId, int sessionId, int page) {
-        return messageService.getChatHistory(userId, sessionId, page);
+    @GetMapping("/friend/history")
+    public Object getFriendHistory(int friendId, int page) {
+        return messageService.getChatHistory(SessionType.FRIEND, friendId, page);
     }
 }

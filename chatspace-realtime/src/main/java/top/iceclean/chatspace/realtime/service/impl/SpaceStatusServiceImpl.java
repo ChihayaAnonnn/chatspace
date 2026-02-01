@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional
+@Deprecated
 public class SpaceStatusServiceImpl implements SpaceStatusService {
 
     @Autowired

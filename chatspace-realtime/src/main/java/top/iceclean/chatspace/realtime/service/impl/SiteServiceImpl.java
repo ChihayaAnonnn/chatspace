@@ -34,7 +34,6 @@ public class SiteServiceImpl implements SiteService {
     private final UserCache userCache;
     private final ZoneCache zoneCache;
 
-
     public SiteServiceImpl(SiteMapper siteMapper, GroupClient groupClient,
                            GeoCache geoCache, UserCache userCache, ZoneCache zoneCache) {
         this.siteMapper = siteMapper;
@@ -47,17 +46,12 @@ public class SiteServiceImpl implements SiteService {
     @Override
     public Site getUserSite(int userId) {
         // 优化，先尝试从缓存中获取，且一次请求获取多个状态
-        Integer[] userStates = userCache.getUserStates(userId, RedisKey.SPACE_SESSION, RedisKey.VISION, RedisKey.EXIST);
-        if (!Arrays.isNullOrContainsNull(userStates)) {
-            int zoneId = zoneCache.getUserZoneId(userId);
-            // 获取用户的虚拟坐标，并构造 Site
-            Site site = geoCache.getUserSite(userStates[0], zoneId, userId);
-            site.setExist(userStates[1]);
-            site.setVision(userStates[2]);
+        Site site = geoCache.getUserSite(userId);
+        if (site.getExist() != null && site.getVision() != null) {
             return site;
         }
         // 否则从数据库获取
-        Site site = siteMapper.selectById(userId);
+        site = siteMapper.selectById(userId);
         // 如果是第一次进入到空间，则为其初始化一个位置信息
         if (site == null) {
             // 初始化位置在 0 号空间的正中央
@@ -77,20 +71,12 @@ public class SiteServiceImpl implements SiteService {
     @Override
     public SiteVO getSiteVO(int userId) {
         Site site = getUserSite(userId);
-        User user = userCache.getUserById(userId);
-        return new SiteVO(site, userCache.wrapUser(user));
+        return new SiteVO(site, userId);
     }
 
     @Override
     public void updateUserSite(SiteVO siteVO) {
-        Site site = new Site();
-        site.setId(siteVO.getUser().getUserId());
-        site.setSpaceId(siteVO.getSpaceId());
-        site.setX(siteVO.getX());
-        site.setY(siteVO.getY());
-        site.setVision(siteVO.getVision());
-        site.setExist(siteVO.getExist());
-        siteMapper.updateById(site);
+        updateUserSite(new Site(siteVO));
     }
 
     @Override

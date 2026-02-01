@@ -1,18 +1,14 @@
 package top.iceclean.chatspace.realtime.processor.message;
 
 import com.alibaba.fastjson.JSON;
-import com.rabbitmq.client.impl.ChannelN;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.Operation;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
 import top.iceclean.chatspace.infrastructure.constant.WsType;
 import top.iceclean.chatspace.infrastructure.dto.WsMessageDTO;
-import top.iceclean.chatspace.infrastructure.po.Session;
 import top.iceclean.chatspace.infrastructure.utils.DateUtils;
 import top.iceclean.chatspace.realtime.common.DataGenerator;
 import top.iceclean.chatspace.realtime.common.SessionRepository;
@@ -22,8 +18,6 @@ import top.iceclean.chatspace.realtime.share.ServerSession;
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.*;
 
 /**
@@ -138,15 +132,6 @@ public class BaseProcessor {
     public static void castMessage(WsType wsType, DataGenerator.Generator generator) {
         // 将消息按照用户情况封装再发送给用户
         generator.target().forEach(userId -> sendMessage(wsType, userId, generator.exec(userId)));
-
-//        // 将消息推入队列
-//        try {
-//            MESSAGE_QUEUE.put(new QueueMessage(wsType, generator));
-//        } catch (InterruptedException e) {
-//            log.error("【广播消息推送失败】{}", e.getCause());
-//            e.printStackTrace();
-//            Thread.currentThread().interrupt();
-//        }
     }
 
     /**
@@ -158,14 +143,6 @@ public class BaseProcessor {
     public static void castMessage(WsType wsType, int userId, Object msg) {
         // 将消息按照用户情况封装再发送给用户
         sendMessage(wsType, userId, msg);
-//        // 将消息推入队列
-//        try {
-//            MESSAGE_QUEUE.put(new QueueMessage(wsType, userId, msg));
-//        } catch (InterruptedException e) {
-//            log.error("【广播消息推送失败】{}", e.getCause());
-//            e.printStackTrace();
-//            Thread.currentThread().interrupt();
-//        }
     }
 
     /**
@@ -177,15 +154,6 @@ public class BaseProcessor {
     public static void castMessage(WsType wsType, Channel channel, Object msg) {
         // 将消息直接发送到管道中
         sendMessage(wsType, channel, msg);
-
-//        // 将消息推入队列
-//        try {
-//            MESSAGE_QUEUE.put(new QueueMessage(wsType, channel, msg));
-//        } catch (InterruptedException e) {
-//            log.error("【广播消息推送失败】{}", e.getCause());
-//            e.printStackTrace();
-//            Thread.currentThread().interrupt();
-//        }
     }
 
     /**
@@ -198,10 +166,7 @@ public class BaseProcessor {
         // 直接发送到指定管道
         if (channel!= null && channel.isOpen()) {
             channel.writeAndFlush(getMessageFrame(wsType, msg));
-            return;
         }
-        // 发出警告
-        log.warn("消息指定通道为空：{}", msg);
     }
 
     /** 重载：通过 userId 发送 */
@@ -210,10 +175,10 @@ public class BaseProcessor {
         // 先检查用户是否在该节点
         if ((session = SessionRepository.get(userId)) != null) {
             sendMessage(wsType, session.getChannel(), msg);
-            return;
+        } else {
+            // 否则推送到消息队列中，供相应的节点消费
+            messageProducer.castMessage(userId, JSON.toJSONString(new WsMessageDTO(wsType, msg)));
         }
-        // 否则推送到消息队列中，供相应的节点消费
-        messageProducer.castMessage(userId, JSON.toJSONString(new WsMessageDTO(wsType, msg)));
     }
 
     /**

@@ -2,6 +2,7 @@ package top.iceclean.chatspace.cache.annotation;
 
 import org.springframework.context.annotation.Import;
 import top.iceclean.chatspace.cache.*;
+import top.iceclean.chatspace.cache.common.UserState;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,6 +16,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Import({GeoCache.class, GroupCache.class, SessionCache.class,
-        SpaceCache.class, UserCache.class, ZoneCache.class})
+        SpaceCache.class, UserCache.class, ZoneCache.class, UserState.class})
 public @interface EnableCache {
 }

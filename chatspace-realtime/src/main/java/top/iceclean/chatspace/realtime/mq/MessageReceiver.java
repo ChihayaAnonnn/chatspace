@@ -12,6 +12,7 @@ import top.iceclean.chatspace.infrastructure.constant.QueueConst;
 import top.iceclean.chatspace.infrastructure.constant.WsType;
 import top.iceclean.chatspace.infrastructure.dto.WsMessageDTO;
 import top.iceclean.chatspace.infrastructure.po.SessionRequest;
+import top.iceclean.chatspace.infrastructure.utils.Pair;
 import top.iceclean.chatspace.infrastructure.vo.ZoneVO;
 import top.iceclean.chatspace.realtime.common.SessionRepository;
 import top.iceclean.chatspace.realtime.processor.message.BaseProcessor;
@@ -21,6 +22,7 @@ import top.iceclean.chatspace.realtime.server.ServerProperties;
 import top.iceclean.chatspace.realtime.share.ServerSession;
 
 import javax.xml.soap.Node;
+import java.util.List;
 
 /**
  * 消息队列的消息接收者器
@@ -97,13 +99,18 @@ public class MessageReceiver {
         container.setQueues(queue);
         container.setMessageListener(message -> {
             // 反序列化出消息
-            NodeMessage nodeMessage = JSON.parseObject(new String(message.getBody()), NodeMessage.class);
-            int userId = nodeMessage.getUserId();
-            switch (nodeMessage.getType()) {
-                case USER_RESET: userResetHandle(userId); break;
-                case USER_MESSAGE: userMessageHandle(userId, nodeMessage.getData()); break;
-                default:
+            try {
+                NodeMessage nodeMessage = JSON.parseObject(new String(message.getBody()), NodeMessage.class);
+                int userId = nodeMessage.getUserId();
+                switch (nodeMessage.getType()) {
+                    case USER_RESET: userResetHandle(userId); break;
+                    case USER_MESSAGE: userMessageHandle(nodeMessage.getBatchData()); break;
+                    default:
+                }
+            } catch (Exception e) {
+                log.error("【MQ 消息解析出错】{}", e.getCause().toString());
             }
+
         });
         container.start();
     }
@@ -119,13 +126,11 @@ public class MessageReceiver {
         }
     }
 
-    private void userMessageHandle(int userId, String data) {
-        WsMessageDTO wsMessageDTO = JSON.parseObject(data, WsMessageDTO.class);
-        switch (wsMessageDTO.getWsTypeEnum()) {
-            case SITE_ADD: break;
-            case SITE_REMOVE: break;
-        }
-        BaseProcessor.castMessage(wsMessageDTO.getWsTypeEnum(), userId, wsMessageDTO.getWsContent());
-
+    private void userMessageHandle(List<Pair<Integer, String>> batchData) {
+        // 批处理用户跨节点消息
+        batchData.forEach(message -> {
+            WsMessageDTO wsMessageDTO = JSON.parseObject(message.getValue(), WsMessageDTO.class);
+            BaseProcessor.castMessage(wsMessageDTO.getWsTypeEnum(), message.getKey(), wsMessageDTO.getWsContent());
+        });
     }
 }

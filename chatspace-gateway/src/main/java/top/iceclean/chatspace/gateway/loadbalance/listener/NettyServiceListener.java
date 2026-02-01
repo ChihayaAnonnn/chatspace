@@ -27,7 +27,7 @@ import java.util.concurrent.Executor;
  * @date : 2023-01-24
  */
 @Slf4j
-@Component
+// @Component
 public class NettyServiceListener implements ApplicationRunner {
 
     /** Nacos 地址 */

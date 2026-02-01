@@ -1,9 +1,8 @@
 package top.iceclean.chatspace.gateway.utils;
 
 import org.redisson.Redisson;
-import org.redisson.api.GeoPosition;
-import org.redisson.api.GeoUnit;
-import org.redisson.api.RLock;
+import org.redisson.api.*;
+import org.redisson.api.geo.GeoSearchArgs;
 import org.redisson.client.protocol.ScoredEntry;
 import org.springframework.stereotype.Component;
 
@@ -134,6 +133,14 @@ public class RedissonUtils {
 
     public Object hashGet(String key, Object field) {
         return redisson.getMap(key).get(field);
+    }
+
+    public Map<Object, Object> hashMultiGet(String key, String ... fields) {
+        return redisson.getMap(key).getAll(Arrays.stream(fields).collect(Collectors.toSet()));
+    }
+
+    public void hashMultiSet(String key, Map<?, ?> map) {
+        redisson.getMap(key).putAll(map);
     }
 
     /**

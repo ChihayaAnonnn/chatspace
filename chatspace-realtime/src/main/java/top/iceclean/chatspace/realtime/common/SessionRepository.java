@@ -3,6 +3,8 @@ package top.iceclean.chatspace.realtime.common;
 import io.netty.channel.Channel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import top.iceclean.chatspace.cache.GeoCache;
+import top.iceclean.chatspace.infrastructure.common.Monitor;
 import top.iceclean.chatspace.infrastructure.po.Site;
 import top.iceclean.chatspace.infrastructure.po.User;
 import top.iceclean.chatspace.infrastructure.vo.SiteVO;
@@ -11,6 +13,7 @@ import top.iceclean.chatspace.realtime.constant.ChannelKey;
 import top.iceclean.chatspace.realtime.service.SiteService;
 import top.iceclean.chatspace.realtime.share.ServerSession;
 
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -29,10 +32,16 @@ public class SessionRepository {
     private static final ConcurrentMap<Integer, ServerSession> USER_SESSION_MAP = new ConcurrentHashMap<>();
 
     private static SiteService siteService;
+    private static GeoCache geoCache;
 
     @Autowired
     public void setSiteService(SiteService siteService) {
         SessionRepository.siteService = siteService;
+    }
+
+    @Autowired
+    public void setGeoCache(GeoCache geoCache) {
+        SessionRepository.geoCache = geoCache;
     }
 
     public static ServerSession bind(Channel channel, User user, Site site) {
@@ -71,7 +80,6 @@ public class SessionRepository {
 
     /** 通过用户 ID 获取会话 */
     public static ServerSession get(int userId) {
-        // TODO 在多机情况下可能会出问题
         return USER_SESSION_MAP.get(userId);
     }
 
@@ -94,7 +102,8 @@ public class SessionRepository {
      * @return 当前用户位置信息的响应对象
      */
     public static SiteVO getSite() {
-        return get(USER_ID_THREAD_LOCAL.get()).getSite();
+        ServerSession session = get(USER_ID_THREAD_LOCAL.get());
+        return session == null ? null : session.getSite();
     }
 
     /**
@@ -103,11 +112,38 @@ public class SessionRepository {
      */
     public static SiteVO getSite(int userId) {
         ServerSession serverSession = get(userId);
+        Monitor.siteGet(serverSession != null);
         if (serverSession == null) {
             // 如果为空的话，说明该用户连接的是其他的服务器，这时候需要从数据库获取位置信息
             return siteService.getSiteVO(userId);
         }
         // 否则直接返回
         return serverSession.getSite();
+    }
+
+    /**
+     * 批量获取用户位置信息
+     * @param userIds 用户 ID 集合
+     * @return 用户位置信息集合
+     */
+    public static Set<SiteVO> batchGetSite(Collection<Integer> userIds) {
+        Set<SiteVO> sites = new HashSet<>(userIds.size());
+        Iterator<Integer> iterator = userIds.iterator();
+        int size = userIds.size();
+        // 先获取本地有的
+        while (iterator.hasNext()) {
+            Integer uId = iterator.next();
+            ServerSession serverSession = get(uId);
+            if (serverSession != null) {
+                sites.add(serverSession.getSite());
+                iterator.remove();
+            }
+        }
+        // 监控
+        Monitor.siteGet(true, size - userIds.size());
+        Monitor.siteGet(false, userIds.size());
+        // 本地获取不到的，到 Redis 批量获取
+        sites.addAll(geoCache.batchGetSite(userIds));
+        return sites;
     }
 }

@@ -1,0 +1,88 @@
+
+server:
+  port: ${SERVER_PORT:19010}
+  # 配置SSL 证书
+  ssl:
+    enabled: true
+    # 证书位置
+    key-store: classpath:chatspace.p12
+    # 秘钥库类型
+    key-store-type: PKCS12
+    # 秘钥库口令（密码）
+    key-store-password: 4w36280v1qfl
+
+spring:
+  application:
+    name: chatspace-gateway
+  rabbitmq:
+    host: 119.91.208.25
+    port: 5672
+    username: iceclean
+    password: jingyin
+    virtual-host: /
+  redis:
+    host: gz-crs-hbo1krxp.sql.tencentcdb.com
+    port: 24569
+    password: Xiaoche423
+    lettuce:
+      pool:
+        max-idle: 16
+        max-active: 8
+        max-wait: 10000
+        min-idle: 8
+  cloud:
+    nacos:
+      server-addr: ${NACOS_IP:127.0.0.1}  # 配置 Nacos 的 IP 地址为预设的主机公网 IP
+    gateway:
+      routes:
+        - id: chatspace-user # 用户服务路由标示
+          uri: lb://chatspace-user # 路由的目标地址（lb：loadBalances）
+          predicates: # 路由断言，判断请求是否符合规则
+            - Path=/space/user/** # 路径断言，判断路径是否是以 /user 开头，如果是则符合
+            # - After=2022-07-06T20:41:00+08:00 # 时间断言，请求必须在指定时间之后，这里使用拉
+        - id: chatspace-group
+          uri: lb://chatspace-group
+          predicates:
+            - Path=/space/group/**,/space/zone/**,/space/space/**
+        - id: chatspace-friend
+          uri: lb://chatspace-friend
+          predicates:
+            - Path=/space/friend/**
+        - id: chatspace-message
+          uri: lb://chatspace-message
+          predicates:
+            - Path=/space/session/list,/space/session/friend/history # message 使用的是 session 前缀
+
+        - id: chatspace-session
+          uri: lb://chatspace-session
+          predicates:
+            - Path=/space/session/**,/space/request/**  # 请求消息使用 request 前缀
+
+        - id: chatspace-netty
+#          uri: lb:wss://chatspace-netty
+          uri: lb:ws://chatspace-netty
+          predicates:
+            - Path=/space/ws/chat
+
+        - id: chatspace-realtime
+          uri: lb://chatspace-realtime
+          predicates:
+            - Path=/space/ws/**,/space/cast/**
+
+# 一致性哈希负载均衡
+consistent-hashing:
+  http-urls:
+  websocket-urls:
+    - /space/ws/chat
+
+# 网关监控
+management:
+  server:
+    port: 10010
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    tags:
+      application: ${spring.application.name}

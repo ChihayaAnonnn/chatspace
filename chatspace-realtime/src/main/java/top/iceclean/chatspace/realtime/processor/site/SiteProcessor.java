@@ -18,27 +18,20 @@ public interface SiteProcessor {
     void enterSpace();
 
     /**
-     * 更新位置信息
+     * 由位置变化引起的位置信息更新
      * @param siteDTO 新位置信息请求对象
      */
     void updateSite(SiteDTO siteDTO);
 
     /**
-     * 更新用户视野
+     * 由区域变化引起的位置信息更新
+     * @param zoneIds 旧->新区域 ID
      */
-    void updateVision();
+    void updateSite(int[] zoneIds);
 
     /**
      * 用户退出空间
      * 将当前用户从其所处的空间上抹除
      */
-    void exitSpace();
-
-    /**
-     * 获取用户的虚拟坐标
-     * @param spaceId 所处空间 ID
-     * @param userId 用户 ID
-     * @return 虚拟位置
-     */
-    Site getUserSite(int spaceId, int userId);
+    void exitSpace(SiteVO siteVO);
 }

@@ -1,5 +1,6 @@
 package top.iceclean.chatspace.message.service;
 
+import top.iceclean.chatspace.infrastructure.constant.SessionType;
 import top.iceclean.chatspace.infrastructure.dto.MessageDTO;
 import top.iceclean.chatspace.infrastructure.po.Message;
 import top.iceclean.chatspace.infrastructure.pojo.Response;
@@ -13,13 +14,13 @@ import top.iceclean.feign.MessageClient;
 public interface MessageService extends MessageClient {
 
     /**
-     * 获取用户在某个接收域的历史消息
-     * @param userId 用户 ID
-     * @param sessionId 会话 ID
+     * 获取用户在某个会话的历史消息
+     * @param type 会话类型
+     * @param targetId 目标 ID
      * @param page 聊天记录的页数
      * @return 历史消息列表
      */
-    Response getChatHistory(int userId, int sessionId, int page);
+    Response getChatHistory(SessionType type, int targetId, int page);
 
     /**
      * 将消息对象转化成消息响应对象

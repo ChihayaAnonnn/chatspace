@@ -19,6 +19,10 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
     /** 集群节点配置 */
+    @Value("${spring.redis.host}")
+    public String host;
+    @Value("${spring.redis.port}")
+    public String port;
     @Value("${spring.redis.password}")
     public String password;
 
@@ -50,13 +54,21 @@ public class RedisConfig {
     /** 注入 Redisson */
     @Bean
     public Redisson redisson() {
-        // 集群模式
+//        // 集群模式
+//        Config config = new Config();
+//        config.useClusterServers()
+//                .addNodeAddress(
+//                        "redis://119.91.208.25:6000",
+//                        "redis://119.91.210.79:6000",
+//                        "redis://119.91.20.241:6000")
+//                .setPassword(password);
+//        config.setCodec(new StringCodec());
+//        return (Redisson) Redisson.create(config);
+
+        // 单机模式
         Config config = new Config();
-        config.useClusterServers()
-                .addNodeAddress(
-                        "redis://119.91.208.25:6000",
-                        "redis://119.91.210.79:6000",
-                        "redis://119.91.20.241:6000")
+        config.useSingleServer()
+                .setAddress("redis://" + host + ":" + port)
                 .setPassword(password);
         config.setCodec(new StringCodec());
         return (Redisson) Redisson.create(config);

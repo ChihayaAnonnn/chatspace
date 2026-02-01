@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import top.iceclean.chatspace.cache.common.UserState;
 import top.iceclean.chatspace.infrastructure.constant.GroupType;
 import top.iceclean.chatspace.infrastructure.constant.RedisKey;
 import top.iceclean.chatspace.infrastructure.constant.ZoneType;
@@ -33,10 +34,9 @@ public class ZoneCache {
     private final GroupClient groupClient;
 
     private final GroupCache groupCache;
-    private final GeoCache geoCache;
 
     /** 缓存用户未 ACK 的区域进入 */
-    private final UserCache.State userState;
+    private final UserState userState;
 
     /** 区域的关键缓存数据 */
     @Getter
@@ -73,12 +73,11 @@ public class ZoneCache {
         }
     }
 
-    public ZoneCache(RedissonUtils redissonUtils, GroupClient groupClient, GroupCache groupCache, GeoCache geoCache) {
+    public ZoneCache(RedissonUtils redissonUtils, GroupClient groupClient, GroupCache groupCache, UserState userState) {
         this.redissonUtils = redissonUtils;
         this.groupClient = groupClient;
         this.groupCache = groupCache;
-        this.geoCache = geoCache;
-        this.userState = new UserCache.State(redissonUtils);
+        this.userState = userState;
     }
 
     /**
@@ -132,9 +131,6 @@ public class ZoneCache {
      * @param zone 指定的区域
      */
     public void cachedZoneSite(Zone zone) {
-        // 先将区域的四个坐标加入，用于判断区域重叠
-        geoCache.putZone(zone);
-
         // 扫描全部坐标，缓存坐标和区域 ID 的映射关系
         String key = RedisKey.ZONE_SITE_HASH + zone.getSpaceId();
         String zoneInfo = Info.serialize(zone);

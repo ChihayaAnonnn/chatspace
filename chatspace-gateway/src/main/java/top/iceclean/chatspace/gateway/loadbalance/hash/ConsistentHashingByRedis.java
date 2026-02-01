@@ -19,8 +19,8 @@ import java.util.*;
  * @date : 2023-02-26
  */
 @Slf4j
-@Component
-public class ConsistentHashingByRedis implements ConsistentHashing{
+// @Component
+public class ConsistentHashingByRedis implements ConsistentHashing {
     /** 虚拟节点个数 */
     private static final int VIRTUAL_NODES = 100;
 
@@ -58,6 +58,41 @@ public class ConsistentHashingByRedis implements ConsistentHashing{
     public ConsistentHashingByRedis(RedissonUtils redissonUtils, AmqpTemplate amqpTemplate) {
         this.redissonUtils = redissonUtils;
         this.amqpTemplate = amqpTemplate;
+    }
+
+    /**
+     * 获取服务节点的可受理空间
+     * @param serverKey 服务节点 key
+     * @return 可受理空间集合
+     */
+    private Set<String> getServerAccessSpace(String serverKey) {
+        Set<String> accessSpaces = new HashSet<>();
+        Object nodeSpace = redissonUtils.hashGet(serverKey, NODE_SPACE);
+        if (nodeSpace != null) {
+            accessSpaces.addAll(JSON.parseArray(nodeSpace.toString(), String.class));
+        }
+        return accessSpaces;
+    }
+
+    private List<Integer> getVirtualNodeList(String serverKey) {
+        Object vnodeObject = redissonUtils.hashGet(serverKey, NODE_VNODE);
+        if (vnodeObject != null) {
+            return JSON.parseArray(vnodeObject.toString(), Integer.class);
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * 获取指定服务节点负载
+     * @param serverKey 服务节点 key
+     * @return 包含两个元素，第一个为当前用户数，第二个为最多用户数
+     */
+    private int[] getServerLoad(String serverKey) {
+        Map<Object, Object> dataMap = redissonUtils.hashMultiGet(serverKey, NODE_USERS, NODE_MAX_USERS);
+        int[] load = new int[2];
+        load[0] = Integer.parseInt(Optional.ofNullable(dataMap.get(NODE_USERS)).orElse("0").toString());
+        load[1] = Integer.parseInt(Optional.ofNullable(dataMap.get(NODE_MAX_USERS)).orElse("0").toString());
+        return load;
     }
 
     @Override
@@ -122,12 +157,11 @@ public class ConsistentHashingByRedis implements ConsistentHashing{
         if (!visited.contains(serverId)) {
             visited.add(serverId);
             // 找到能受理的节点则退出
-            Object nodeSpace = redissonUtils.hashGet(SERVER_NODE + serverId, NODE_SPACE);
-            if (nodeSpace != null) {
-                List<String> accessSpace = JSON.parseArray(nodeSpace.toString(), String.class);
-                if (accessSpace.contains(spaceId)) {
-                    return true;
-                }
+            String serverKey = SERVER_NODE + serverId;
+            Set<String> accessSpace = getServerAccessSpace(serverKey);
+            if (accessSpace.contains(spaceId)) {
+                int[] serverLoad = getServerLoad(serverKey);
+                return serverLoad[0] < serverLoad[1];
             }
             log.info("{} 无法受理，继续寻找下一个", serverId);
         }
@@ -173,13 +207,13 @@ public class ConsistentHashingByRedis implements ConsistentHashing{
             }
             // 设置节点数据，往哈希环中插入虚拟节点并保存他们的哈希值
             List<Integer> vnodeList = addVirtualNode(serverId);
-            redissonUtils.hashSet(serverKey, NODE_MAX_USERS, 0);
+            redissonUtils.hashSet(serverKey, NODE_USERS, 0);
             redissonUtils.hashSet(serverKey, NODE_VNODE, JSON.toJSONString(vnodeList));
             // 更新元数据
             MetadataUpdate metadataUpdate = updateMetadata(serverKey, instance.getMetadata());
 
             // 当新的节点能够受理用户连接，则该用户连接需要重置
-            userResetHandle(vnodeList, metadataUpdate);
+            userResetHandle(serverId, vnodeList, metadataUpdate);
             log.info("节点增加成功：{}", serverId);
         }
     }
@@ -214,19 +248,14 @@ public class ConsistentHashingByRedis implements ConsistentHashing{
      * @param serverId 节点 ID
      */
     private void serverRemove(String serverId) {
-        // 获取节点所有的虚拟节点
-        Object vnodeObject = redissonUtils.hashGet(SERVER_NODE + serverId, NODE_VNODE);
-        if (vnodeObject != null) {
-            // 移除掉节点信息
-            redissonUtils.delete(SERVER_NODE + serverId);
-            // 从哈希环上移除掉该节点的所有虚拟节点
-            JSON.parseArray(vnodeObject.toString()).forEach(vnodeId ->
-                    redissonUtils.sortedRemove(SERVER_RING, vnodeId));
-            log.info("成功移除节点：{}", SERVER_NODE + serverId);
-        } else {
-            // 没有可移除的
-            log.error("没有可移除的节点：{}", SERVER_NODE + serverId);
+        // 移除节点信息
+        redissonUtils.delete(SERVER_NODE + serverId);
+        // 将全部虚拟节点移除
+        List<String> nodeList = new ArrayList<>(VIRTUAL_NODES);
+        for (int i=0; i<VIRTUAL_NODES; i++) {
+            nodeList.add(serverId + "#" + i);
         }
+        redissonUtils.sortedRemoveAll(SERVER_RING, nodeList);
     }
 
     @Override
@@ -235,31 +264,32 @@ public class ConsistentHashingByRedis implements ConsistentHashing{
             return;
         }
         for (Instance instance : metadataUpdates) {
-            String id = instance.getIp() + ":" + instance.getPort();
-            String serverKey = SERVER_NODE + id;
-            Object vnodeObject = redissonUtils.hashGet(serverKey, NODE_VNODE);
-            if (vnodeObject == null) {
-                log.error("更新配置的服务节点不存在：{}", id);
-                continue;
-            }
+            String serverId = instance.getIp() + ":" + instance.getPort();
+            String serverKey = SERVER_NODE + serverId;
             // 获取虚拟节点列表
-            List<Integer> vnodeList = JSON.parseArray(vnodeObject.toString(), Integer.class);
+            List<Integer> vnodeList = getVirtualNodeList(serverKey);
+            if (vnodeList.isEmpty()) {
+                log.error("服务节点无虚拟列表，补偿移除操作");
+                serverRemove(serverId);
+                return;
+            }
+
             // 受理空间发生改变，需要更改用户连接
             MetadataUpdate metadataUpdate = updateMetadata(serverKey, instance.getMetadata());
             if (metadataUpdate.updated) {
                 // 处理移除的受理空间
                 Set<String> removeSpaces = metadataUpdate.removeSpaces;
                 if (!removeSpaces.isEmpty()) {
-                    log.info("{} 移除受理空间：{}", id, removeSpaces);
+                    log.info("{} 移除受理空间：{}", serverId, removeSpaces);
                     // 若用户连接的空间从本节点移除掉了，则该用户连接需要重置
-                    userResetHandle(vnodeList, metadataUpdate);
+                    userResetHandle(serverId, vnodeList, metadataUpdate);
                 }
                 // 处理新增的受理空间
                 Set<String> newSpaces = metadataUpdate.newSpaces;
                 if (!newSpaces.isEmpty()) {
-                    log.info("{} 新增受理空间：{}", id, newSpaces);
+                    log.info("{} 新增受理空间：{}", serverId, newSpaces);
                     // 当用户连接的空间是本节点可以受理了，则用户连接也需要重置
-                    userResetHandle(vnodeList, metadataUpdate);
+                    userResetHandle(serverId, vnodeList, metadataUpdate);
                 }
             }
         }
@@ -277,12 +307,7 @@ public class ConsistentHashingByRedis implements ConsistentHashing{
         redissonUtils.hashSet(serverKey, NODE_MAX_USERS, newMaxUserNum == null ? 200 : Integer.parseInt(newMaxUserNum));
 
         // 获取当前受理空间
-        Set<String> accessSpaces = new HashSet<>();
-        Object nodeSpace = redissonUtils.hashGet(serverKey, NODE_SPACE);
-        if (nodeSpace != null) {
-            accessSpaces.addAll(JSON.parseArray(nodeSpace.toString(), String.class));
-        }
-
+        Set<String> accessSpaces = getServerAccessSpace(serverKey);
         // 存储变化集
         Set<String> removeSpaces;
         Set<String> newSpaces = Collections.emptySet();
@@ -319,7 +344,7 @@ public class ConsistentHashingByRedis implements ConsistentHashing{
      * @param vnodeList 目标服务结点的虚拟节点列表
      * @param metadataUpdate 元数据更新情况
      */
-    private void userResetHandle(List<Integer> vnodeList, MetadataUpdate metadataUpdate) {
+    private void userResetHandle(String serverId, List<Integer> vnodeList, MetadataUpdate metadataUpdate) {
         // 收集需要更改的用户 ID
         List<String> resetUserList = new ArrayList<>();
         vnodeList.forEach(hash -> {
@@ -345,7 +370,7 @@ public class ConsistentHashingByRedis implements ConsistentHashing{
             });
             // 收集起来准备通知，并从用户环中移除这些用户
             resetUserList.addAll(removeUserList);
-            removeUserList.forEach(this::userRemove);
+            removeUserList.forEach(userId -> userRemove(serverId, userId));
             redissonUtils.sortedRemoveAll(USER_RING, removeUserList);
         });
         // 发送用户连接更变消息到消息队列，由各个节点自行处理
@@ -357,18 +382,13 @@ public class ConsistentHashingByRedis implements ConsistentHashing{
                         JSON.toJSONString(new NodeMessage(NodeMessage.Type.USER_RESET, Integer.parseInt(userId), null)));
             }
         }
-
     }
 
     @Override
-    public void userRemove(Object userId) {
+    public void userRemove(String serverId, Object userId) {
         if (redissonUtils.sortedRemove(USER_RING, userId)) {
             log.info("用户 {} 从哈希环中移除", userId);
-            Object node = redissonUtils.hashGet(USER_DATA + userId, USER_SERVER_NODE);
-            redissonUtils.hashIncrBy(SERVER_NODE + node, NODE_USERS, -1);
-            if (node == null) {
-                log.warn("找不到用户所在节点的记录：userId={}", userId);
-            }
+            redissonUtils.hashIncrBy(SERVER_NODE + serverId, NODE_USERS, -1);
             return;
         }
         log.warn("用户哈希环中找不到记录：userId={}", userId);

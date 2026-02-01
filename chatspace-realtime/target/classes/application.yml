@@ -1,0 +1,43 @@
+
+server:
+  port: ${SERVER_PORT:19018}
+  servlet:
+    context-path: /space
+
+spring:
+  profiles:
+    active: produce
+    include: shared
+  rabbitmq:
+    host: 119.91.208.25
+    port: 5672
+    username: iceclean
+    password: jingyin
+    virtual-host: /
+
+chatspace:
+  websocket:
+    register:
+      ip: ${HOST_IP:127.0.0.1}
+      port: ${REGISTER_PORT:19019}
+      nacos-ip: ${NACOS_IP:127.0.0.1}
+      max-user-num: 300
+      access-space: [1, 2, 5]
+    timeout:
+      read: 180
+      write: 0
+      idle: 0
+    ssl:
+      file: chatspace.iceclean.top.jks
+      password: 4w36280v1qfl
+
+management:
+  server:
+    port: ${MANAGEMENT_PORT:10018}
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    tags:
+      application: ${spring.application.name}

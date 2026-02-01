@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div contenteditable='true' class="messageInput" id='messageInput' style='height: 100%;  border: 1px solid black; outline: none; overflow-y: scroll'>这里可以编辑</div>
+</body>
+<script>
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://qgailab.com/upgrader/user/login');
+    xhr.send({userName: "IceClean", userPass: `aaaaaa`});
+    xhr.onload = function(e) {
+        var xhr = e.target;
+        console.log(xhr.responseText);
+    }
+</script>
+</html>

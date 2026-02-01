@@ -1,0 +1,7 @@
+top\iceclean\feign\UserClient.class
+top\iceclean\feign\MessageClient.class
+top\iceclean\feign\itercepter\InnerCall.class
+top\iceclean\feign\annotation\EnableInnerCall.class
+top\iceclean\feign\SessionClient.class
+top\iceclean\feign\GroupClient.class
+top\iceclean\feign\FriendClient.class

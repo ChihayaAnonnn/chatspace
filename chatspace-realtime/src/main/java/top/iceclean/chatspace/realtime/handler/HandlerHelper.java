@@ -10,6 +10,19 @@ import top.iceclean.chatspace.realtime.constant.ChannelKey;
  */
 public class HandlerHelper {
 
+    private HandlerHelper() {
+
+    }
+
+    /** 用户是否初始化完毕 */
+    public static void setInitState(ChannelHandlerContext ctx, boolean state) {
+        ctx.channel().attr(ChannelKey.INIT_STATE).set(state);
+    }
+
+    public static boolean isInitialized(ChannelHandlerContext ctx) {
+        return ctx.channel().attr(ChannelKey.INIT_STATE).get();
+    }
+
     public static String getToken(ChannelHandlerContext ctx) {
         return ctx.channel().attr(ChannelKey.TOKEN).get();
     }

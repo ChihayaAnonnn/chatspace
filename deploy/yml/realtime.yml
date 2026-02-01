@@ -1,0 +1,19 @@
+
+version: '3.8'
+services:
+  realtime1:
+    build:
+      args:
+        NACOS_IP: $NACOS_IP
+        HOST_IP: $HOST_IP
+        SERVER_PORT: 19020
+        JVM_PORT: 19021
+        MANAGEMENT_PORT: 19022
+        REGISTER_PORT: 19023
+      context: ./chatspace-realtime
+      dockerfile: Dockerfile
+    ports:
+      - "19020:19020"
+      - "19021:19021"
+      - "19022:19022"
+      - "19023:19023"

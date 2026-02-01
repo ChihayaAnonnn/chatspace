@@ -1,0 +1,13 @@
+
+version: '3.8'
+services:
+  gateway1:
+    build:
+      args:
+        NACOS_IP: $NACOS_IP
+        HOST_IP: $HOST_IP
+        SERVER_PORT: 19010
+      context: ./chatspace-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "19010:19010"

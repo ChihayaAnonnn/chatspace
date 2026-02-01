@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.iceclean.chatspace.infrastructure.po.SessionRequest;
 
+import java.util.Scanner;
+
 /**
  * 消息队列的消息生产者
  * @author : Ice'Clean

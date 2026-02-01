@@ -10,6 +10,8 @@ import top.iceclean.feign.GroupClient;
 import top.iceclean.feign.UserClient;
 import top.iceclean.feign.annotation.EnableInnerCall;
 
+import java.util.Scanner;
+
 /**
  * @author : Ice'Clean
  * @date : 2022-10-08

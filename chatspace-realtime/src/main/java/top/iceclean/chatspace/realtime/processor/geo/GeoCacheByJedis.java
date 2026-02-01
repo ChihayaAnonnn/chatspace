@@ -70,7 +70,7 @@ public class GeoCacheByJedis {
     public void putUser(SiteVO siteVO, int zoneId) {
         // 先进行坐标的转换
         double[] geoSite = GeoUtils.compute(siteVO.getX(), siteVO.getY(), DEFAULT_RATE);
-        geoAdd(RedisKey.USER_SITE_HASH.apply(siteVO.getSpaceId(), zoneId), siteVO.getUser().getUserId(), geoSite[0], geoSite[1]);
+        geoAdd(RedisKey.USER_SITE_HASH.apply(siteVO.getSpaceId(), zoneId), siteVO.getUserId(), geoSite[0], geoSite[1]);
     }
     public void putUser(SiteDTO siteDTO, int zoneId) {
         // 先进行坐标的转换
@@ -83,7 +83,7 @@ public class GeoCacheByJedis {
      * @param siteVO 用户坐标信息
      */
     public void removeUser(SiteVO siteVO, int zoneId) {
-        redisTemplateUtils.geoRemove(RedisKey.USER_SITE_HASH.apply(siteVO.getSpaceId(), zoneId), siteVO.getUser().getUserId());
+        redisTemplateUtils.geoRemove(RedisKey.USER_SITE_HASH.apply(siteVO.getSpaceId(), zoneId), siteVO.getUserId());
     }
 
     /**

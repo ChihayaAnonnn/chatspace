@@ -3,6 +3,7 @@ package top.iceclean.chatspace.infrastructure.utils;
 import org.redisson.Redisson;
 import org.redisson.RedissonKeys;
 import org.redisson.api.*;
+import org.redisson.api.geo.GeoSearchArgs;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -23,6 +24,10 @@ public class RedissonUtils {
 
     @Resource
     public Redisson redisson;
+
+    public Iterable<String> keyScan(String pattern) {
+        return redisson.getKeys().getKeysByPattern(pattern);
+    }
 
     /**
      * 缓存基本的对象，Integer、String、实体类等
@@ -182,19 +187,12 @@ public class RedissonUtils {
         return null;
     }
 
-    public Map<Object, Double> geoRadius(String key, Integer member, double radius, GeoUnit unit) {
-        try {
-            return redisson.getGeo(key).radiusWithDistanceAsync(member, radius, unit).get();
-        } catch (InterruptedException e) {
-            // 被打断了，则重新计算
-            System.out.println("计算 GEO 时被打断，重新计算");
-            return geoRadius(key, member, radius, unit);
-        } catch (ExecutionException e) {
-            // 计算异常，返回空集
-            System.out.println("计算 GEO 异常");
-            e.printStackTrace();
-        }
-        return new HashMap<>(0);
+    public Map<String, Double> geoRadius(String key, Integer member, double radius, GeoUnit unit) {
+//        RFuture<Map<Object, Double>> mapRFuture = redisson.getGeo(key).searchWithDistanceAsync(GeoSearchArgs.from(member).radius(radius, unit));
+//        mapRFuture.whenComplete((a, b) -> {
+//
+//        })
+        return redisson.<String>getGeo(key).searchWithDistance(GeoSearchArgs.from(member).radius(radius, unit));
     }
 
     /**

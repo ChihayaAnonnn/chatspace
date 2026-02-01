@@ -1,0 +1,108 @@
+version: "3.8"
+services:
+  chatspace-gateway:
+    build:
+      args:
+        NACOS_IP: $NACOS_IP
+        HOST_IP: $HOST_IP
+      context: ./chatspace-gateway
+      dockerfile: Dockerfile
+    ports:
+      - 19010:19010
+    network_mode: "host"
+    volumes:
+      # 时区
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+
+  chatspace-user:
+    build:
+      args:
+        NACOS_IP: $NACOS_IP
+        HOST_IP: $HOST_IP
+      context: ./chatspace-user
+      dockerfile: Dockerfile
+    ports:
+      - 19011:19011
+    network_mode: "host"
+    volumes:
+      - "/home/iceclean/project/ChatSpace/static:/home/iceclean/project/ChatSpace/static"
+        # 时区
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+
+  chatspace-friend:
+    build:
+      args:
+        NACOS_IP: $NACOS_IP
+        HOST_IP: $HOST_IP
+      context: ./chatspace-friend
+      dockerfile: Dockerfile
+    ports:
+      - 19012:19012
+    network_mode: "host"
+    volumes:
+      # 时区
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+
+  chatspace-group:
+    build:
+      args:
+        NACOS_IP: $NACOS_IP
+        HOST_IP: $HOST_IP
+      context: ./chatspace-group
+      dockerfile: Dockerfile
+    ports:
+      - 19013:19013
+    network_mode: "host"
+    volumes:
+      # 时区
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+
+  chatspace-message:
+    build:
+      args:
+        NACOS_IP: $NACOS_IP
+        HOST_IP: $HOST_IP
+      context: ./chatspace-message
+      dockerfile: Dockerfile
+    ports:
+      - 19014:19014
+    network_mode: "host"
+    volumes:
+      # 时区
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+
+  chatspace-session:
+    build:
+      args:
+        NACOS_IP: $NACOS_IP
+        HOST_IP: $HOST_IP
+      context: ./chatspace-session
+      dockerfile: Dockerfile
+    ports:
+      - 19015:19015
+    network_mode: "host"
+    volumes:
+      # 时区
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+
+  chatspace-realtime:
+    build:
+      args:
+        NACOS_IP: $NACOS_IP
+        HOST_IP: $HOST_IP
+      context: ./chatspace-realtime
+      dockerfile: Dockerfile
+    ports:
+      - 19018
+      - 19019
+    network_mode: "host"
+    volumes:
+      # 时区
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro

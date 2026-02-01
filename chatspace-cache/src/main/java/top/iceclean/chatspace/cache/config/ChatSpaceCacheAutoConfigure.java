@@ -3,6 +3,7 @@ package top.iceclean.chatspace.cache.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import top.iceclean.chatspace.cache.*;
+import top.iceclean.chatspace.cache.common.UserState;
 
 /**
  * 缓存的自动装载
@@ -11,6 +12,6 @@ import top.iceclean.chatspace.cache.*;
  */
 @Configuration
 @Import({GeoCache.class, GroupCache.class, SessionCache.class,
-        SpaceCache.class, UserCache.class, ZoneCache.class})
+        SpaceCache.class, UserCache.class, ZoneCache.class, UserState.class})
 public class ChatSpaceCacheAutoConfigure {
 }

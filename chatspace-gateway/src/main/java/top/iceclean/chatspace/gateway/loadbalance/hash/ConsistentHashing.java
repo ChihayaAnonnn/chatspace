@@ -40,9 +40,10 @@ public interface ConsistentHashing {
 
     /**
      * 移除用户
+     * @param serverId 服务节点 ID
      * @param userId 用户 ID
      */
-    void userRemove(Object userId);
+    void userRemove(String serverId, Object userId);
 
     /**
      * 使用的哈希算法，默认为 FNV1_32_HASH

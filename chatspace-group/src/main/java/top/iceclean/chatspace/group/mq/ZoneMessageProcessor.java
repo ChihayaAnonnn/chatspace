@@ -1,3 +1,5 @@
+
+
 package top.iceclean.chatspace.group.mq;
 
 import com.alibaba.fastjson.JSON;
@@ -42,6 +44,7 @@ public class ZoneMessageProcessor {
     public BoxService getBoxService() {
         return boxService;
     }
+
 
     /**
      * 箱子锁消息消费者

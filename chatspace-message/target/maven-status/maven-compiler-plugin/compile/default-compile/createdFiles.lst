@@ -1,0 +1,7 @@
+top\iceclean\chatspace\message\controller\MessageController.class
+top\iceclean\chatspace\message\service\MessageService.class
+top\iceclean\chatspace\message\ChatSpaceMessageApplication.class
+top\iceclean\chatspace\message\mapper\MessageMapper.class
+top\iceclean\chatspace\message\service\impl\MessageServiceImpl.class
+top\iceclean\chatspace\message\mq\MessageReceiver.class
+top\iceclean\chatspace\message\controller\MessageInnerController.class

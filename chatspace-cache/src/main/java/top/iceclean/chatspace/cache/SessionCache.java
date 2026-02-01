@@ -2,6 +2,7 @@ package top.iceclean.chatspace.cache;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import top.iceclean.chatspace.cache.common.UserState;
 import top.iceclean.chatspace.infrastructure.constant.RedisKey;
 import top.iceclean.chatspace.infrastructure.constant.SessionType;
 import top.iceclean.chatspace.infrastructure.utils.RedissonUtils;
@@ -23,16 +24,16 @@ public class SessionCache {
     private final ZoneCache zoneCache;
     private final SpaceCache spaceCache;
     /** 用户的临时会话状态缓存 */
-    private final UserCache.State userState;
+    private final UserState userState;
 
-    @Autowired
-    public SessionCache(RedissonUtils redissonUtils, UserCache userCache, GroupCache groupCache, ZoneCache zoneCache, SpaceCache spaceCache) {
+    public SessionCache(RedissonUtils redissonUtils, UserCache userCache, GroupCache groupCache,
+                        ZoneCache zoneCache, SpaceCache spaceCache, UserState userState) {
         this.redissonUtils = redissonUtils;
         this.userCache = userCache;
         this.groupCache = groupCache;
         this.zoneCache = zoneCache;
-        this.userState = new UserCache.State(redissonUtils);
         this.spaceCache = spaceCache;
+        this.userState = userState;
     }
 
     /**

@@ -44,6 +44,6 @@ public class User {
         this.email = userDTO.getEmail();
 
         // 设置默认头像
-        this.avatar = "../img/avatar/default.png";
+        this.avatar = "default.png";
     }
 }

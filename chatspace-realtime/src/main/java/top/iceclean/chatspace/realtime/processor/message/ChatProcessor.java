@@ -1,6 +1,7 @@
 package top.iceclean.chatspace.realtime.processor.message;
 
 import com.alibaba.fastjson.JSON;
+import top.iceclean.chatspace.cache.GeoCache;
 import top.iceclean.chatspace.cache.SessionCache;
 import top.iceclean.chatspace.cache.UserCache;
 import top.iceclean.chatspace.infrastructure.constant.SessionType;
@@ -14,6 +15,7 @@ import top.iceclean.chatspace.infrastructure.constant.WsType;
 import top.iceclean.chatspace.infrastructure.dto.MessageDTO;
 import top.iceclean.chatspace.infrastructure.po.SessionRequest;
 import top.iceclean.chatspace.realtime.mq.MessageProducer;
+import top.iceclean.chatspace.realtime.processor.site.GeoProcessor;
 
 import java.util.Set;
 
@@ -30,12 +32,15 @@ public class ChatProcessor {
     private final SessionCache sessionCache;
     /** 消息队列生产者 */
     private final MessageProducer messageProducer;
+    /** 位置处理器 */
+    private final GeoProcessor geoProcessor;
 
     @Autowired
-    public ChatProcessor(UserCache uc, SessionCache sc, MessageProducer messageProducer) {
+    public ChatProcessor(UserCache uc, SessionCache sc, MessageProducer messageProducer, GeoProcessor geoProcessor) {
         this.userCache = uc;
         this.sessionCache = sc;
         this.messageProducer = messageProducer;
+        this.geoProcessor = geoProcessor;
     }
 
     /**
@@ -59,12 +64,19 @@ public class ChatProcessor {
      */
     public void chatRequestSyn(String reqSyn) {
         ChatRequestDTO.RequestSyn reqSynDTO = JSON.parseObject(reqSyn, ChatRequestDTO.RequestSyn.class);
-        // 如果是建立连接的话，则构造聊天请求消息
-        ChatRequestVO.RequestSyn reqSynVO = new ChatRequestVO.RequestSyn();
-        reqSynVO.setType(reqSynDTO.getType());
-        reqSynVO.setSite(SessionRepository.getSite());
-        // 向目标用户发送私聊请求
-        BaseProcessor.castMessage(WsType.CHAT_REQUEST_SYN, reqSynDTO.getTargetId(), reqSynVO);
+        // 只有目标用户能看见该用户，才能发起请求
+        int userId = SessionRepository.getUser().getUserId();
+        if (geoProcessor.canSee(reqSynDTO.getTargetId(), userId)) {
+            // 如果是建立连接的话，则构造聊天请求消息
+            ChatRequestVO.RequestSyn reqSynVO = new ChatRequestVO.RequestSyn();
+            reqSynVO.setType(reqSynDTO.getType());
+            reqSynVO.setSite(SessionRepository.getSite());
+            // 向目标用户发送私聊请求
+            BaseProcessor.castMessage(WsType.CHAT_REQUEST_SYN, reqSynDTO.getTargetId(), reqSynVO);
+            return;
+        }
+        // 向当前用户发送私聊邀请失败，对方看不见自己
+        BaseProcessor.castMessage(WsType.CHAT_REQUEST_UNREACHABLE, userId, "私聊请求不可达");
     }
 
     /**
@@ -82,7 +94,7 @@ public class ChatProcessor {
         // 如果当前用户同意的话
         if (Boolean.TRUE.equals(ackDTO.getAccess())) {
             // 因为对方将要加入新的会话，要先从原来的会话中退出
-            exitNowSession(ackDTO.getTargetId());
+            exitNowSession(SessionRepository.get(ackDTO.getTargetId()).getUser());
             // 根据类型为双方获取临时会话或者好友会话
             if (ackDTO.getType() == SessionType.TEMP) {
                 // 先获取当前用户可能在的临时会话
@@ -93,7 +105,7 @@ public class ChatProcessor {
                         sessionCache.newTempSession(userVO.getUserId(), ackDTO.getTargetId()));
             } else {
                 // 是好友会话的话，当前用户也需要从原来的会话退出来
-                exitNowSession(userVO.getUserId());
+                exitNowSession(userVO);
                 // 最后获取好友会话
                 synAckVO.setSessionId(userCache.getFriendSession(userVO.getUserId(), ackDTO.getTargetId()));
             }
@@ -110,24 +122,22 @@ public class ChatProcessor {
      */
     public void chatRequestFin(String reqFin) {
         ChatRequestDTO.RequestFin reqFinDTO = JSON.parseObject(reqFin, ChatRequestDTO.RequestFin.class);
-        // 获取当前用户 ID
-        int userId = SessionRepository.getUser().getUserId();
+        // 获取当前用户
+        UserVO user = SessionRepository.getUser();
         // 根据是临时会话还是好友会话，执行不同的会话退出策略
         if (reqFinDTO.getTargetId() < 0) {
-            exitTempSession(userId, reqFinDTO.getTargetId());
+            exitTempSession(user, reqFinDTO.getTargetId());
         } else {
-            exitFriendSession(userId, reqFinDTO.getTargetId());
+            exitFriendSession(user, reqFinDTO.getTargetId());
         }
     }
 
     /**
      * 将用户从指定的临时会话中移出
-     * @param userId 指定的用户
+     * @param user 指定的用户
      * @param sessionId 指定会话 ID
      */
-    private void exitTempSession(int userId, int sessionId) {
-        // 获取当前用户
-        UserVO user = SessionRepository.get(userId).getUser();
+    private void exitTempSession(UserVO user, int sessionId) {
         // 构造聊天连接断开确认消息
         ChatRequestVO.FinAck finAckVO = new ChatRequestVO.FinAck(user, sessionId);
         // 先移除用户，再向会话中剩下的用户发送该用户的离开消息（兼判断用户是否在群聊中，不在的话返回空集，不予发送消息）
@@ -142,12 +152,11 @@ public class ChatProcessor {
 
     /**
      * 将用户从可能所在的好友会话中移出（同时移除好友会话）
-     * @param userId 指定的用户
+     * @param user 指定的用户
      * @param friendId 好友会话 ID
      */
-    private void exitFriendSession(int userId, int friendId) {
+    private void exitFriendSession(UserVO user, int friendId) {
         // 获取当前用户
-        UserVO user = SessionRepository.get(userId).getUser();
         // 构造聊天连接断开确认消息
         ChatRequestVO.FinAck finAckVO = new ChatRequestVO.FinAck(user, friendId);
         // 先获取好友会话里的用户
@@ -162,16 +171,16 @@ public class ChatProcessor {
     }
 
     /** 将指定用户从其当前所在的会话中移出（如果存在的话） */
-    public void exitNowSession(int userId) {
+    public void exitNowSession(UserVO user) {
         // 是否在临时会话中，在则移出
-        Integer sessionId = sessionCache.getUserTempSession(userId);
+        Integer sessionId = sessionCache.getUserTempSession(user.getUserId());
         if (sessionId != null) {
-            exitTempSession(userId, sessionId);
+            exitTempSession(user, sessionId);
         }
         // 是否在好友会话中，在也移出
-        Integer friendId = userCache.getUserFriendSession(userId);
+        Integer friendId = userCache.getUserFriendSession(user.getUserId());
         if (friendId != null) {
-            exitFriendSession(userId, friendId);
+            exitFriendSession(user, friendId);
         }
     }
 

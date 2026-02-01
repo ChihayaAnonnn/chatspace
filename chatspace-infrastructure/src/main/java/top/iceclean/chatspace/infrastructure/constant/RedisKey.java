@@ -22,14 +22,18 @@ public class RedisKey {
     private static final String POINT   = "point:";
 
     /** 用户缓存通用键（token、认证、所在临时会话） */
+    public static final String USER_ID = "id";
     public static final String TOKEN  = "token";
     public static final String AUTHORITIES = "authorities";
     public static final String SERVER_NODE = "server-node";
-    public static final String TEMP_SESSION = "temp_session";
-    public static final String FRIEND_SESSION = "friend_session";
-    public static final String SPACE_SESSION = "space_session";
+    public static final String TEMP_SESSION = "temp_id";
+    public static final String FRIEND_SESSION = "friend_id";
+    public static final String SPACE_SESSION = "space_id";
     public static final String EXIST = "exist";
     public static final String VISION = "vision";
+    public static final String X = "x";
+    public static final String Y = "y";
+
     /** 用户未 ACK 的区域进入 */
     public static final String TEMP_ZONE_IN = "temp_zone_in";
     public static final String USER_BOX = "user_box";

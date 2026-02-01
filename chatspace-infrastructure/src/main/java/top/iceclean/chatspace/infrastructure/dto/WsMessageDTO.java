@@ -1,6 +1,5 @@
 package top.iceclean.chatspace.infrastructure.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import top.iceclean.chatspace.infrastructure.constant.WsType;
 
@@ -10,13 +9,19 @@ import top.iceclean.chatspace.infrastructure.constant.WsType;
  * @date : 2022-06-01
  */
 @Data
-@AllArgsConstructor
 public class WsMessageDTO {
     /** 消息类型 */
     private WsType wsType;
-
     /** 消息主体 */
     private Object wsContent;
+    /** 生成该消息的时间戳 */
+    private Long timestamp;
+
+    public WsMessageDTO(WsType wsType, Object wsContent) {
+        this.wsType = wsType;
+        this.wsContent = wsContent;
+        this.timestamp = System.currentTimeMillis();
+    }
 
     public WsType getWsTypeEnum() {
         return wsType;

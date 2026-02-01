@@ -7,6 +7,7 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import top.iceclean.chatspace.cache.UserCache;
 import top.iceclean.chatspace.infrastructure.utils.DateUtils;
 import top.iceclean.chatspace.infrastructure.utils.RedissonUtils;
 import top.iceclean.chatspace.realtime.handler.AuthHandler;
@@ -58,9 +59,10 @@ public class WebSocketServer {
     private final ChatProcessor chatProcessor;
     private final UserProcessor userProcessor;
     private final ZoneProcessor zoneProcessor;
+    private final UserCache userCache;
 
     public WebSocketServer(ServerProperties serverProperties, SiteService siteService, SiteProcessor siteProcessor, RedissonUtils redissonUtils,
-                           ChatProcessor chatProcessor, UserProcessor userProcessor, ZoneProcessor zoneProcessor) {
+                           ChatProcessor chatProcessor, UserProcessor userProcessor, ZoneProcessor zoneProcessor, UserCache userCache) {
         this.serverProperties = serverProperties;
         this.siteService = siteService;
         this.siteProcessor = siteProcessor;
@@ -68,6 +70,7 @@ public class WebSocketServer {
         this.chatProcessor = chatProcessor;
         this.userProcessor = userProcessor;
         this.zoneProcessor = zoneProcessor;
+        this.userCache = userCache;
         log.info("超时控制：{} {} {}", serverProperties.timeout.getRead(), serverProperties.timeout.getWrite(), serverProperties.timeout.getIdle());
         log.info("服务注册：{}, {} {}", serverProperties.register.getNacosIp(), serverProperties.register.getIp(), serverProperties.register.getPort());
         log.info("SSL 认证：{} {}", serverProperties.ssl.getFile(), serverProperties.ssl.getPassword());
@@ -80,7 +83,7 @@ public class WebSocketServer {
 
         // 设置线程组
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workGroup = new NioEventLoopGroup(64);
+        EventLoopGroup workGroup = new NioEventLoopGroup(8);
         ServerBootstrap bootstrap = new ServerBootstrap();
         bootstrap.group(bossGroup, workGroup)
                 .channel(NioServerSocketChannel.class)
@@ -112,7 +115,7 @@ public class WebSocketServer {
                         // 心跳机制
                         .addLast(new IdleStateHandler(serverProperties.timeout.getRead(), serverProperties.timeout.getWrite(), serverProperties.timeout.getIdle()))
                         // 聊天业务处理器
-                        .addLast(new ChatHandler(siteService, siteProcessor, redissonUtils, chatProcessor, userProcessor, zoneProcessor))
+                        .addLast(new ChatHandler(siteService, siteProcessor, redissonUtils, chatProcessor, userProcessor, zoneProcessor, userCache))
                         // 异常处理器
                         .addLast(new ExceptionHandler());
             }

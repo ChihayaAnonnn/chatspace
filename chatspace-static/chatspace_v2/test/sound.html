@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>webrtc</title>
+    <style>
+        #yours{
+            width:300px;
+            position:absolute;
+            top:200px;
+            left:100px;
+        }
+        #theirs{
+            width:300px;
+            position:absolute;
+            top:200px;
+            left:400px;
+        }
+    </style>
+</head>
+<body>
+<button onclick="createOffer()">开始视频</button>
+<video id="yours" autoplay></video>
+<video id="theirs" autoplay></video>
+
+</body>
+<script src="webrtc-lib.js"></script>
+<script type="text/javascript" src="./jquery.js"></script>
+<script src="webrtc.js"></script>
+<script>
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+            yourVideo.srcObject = stream;
+            window.stream = stream;
+            Connection.addStream(stream)
+        },
+        err => {
+            console.log(err);
+        })
+</script>
+</html>

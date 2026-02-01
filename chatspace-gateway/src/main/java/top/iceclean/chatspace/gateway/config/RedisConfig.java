@@ -2,10 +2,7 @@ package top.iceclean.chatspace.gateway.config;
 
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import org.redisson.Redisson;
-import org.redisson.client.codec.Codec;
 import org.redisson.client.codec.StringCodec;
-import org.redisson.client.protocol.Decoder;
-import org.redisson.client.protocol.Encoder;
 import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -25,6 +22,10 @@ import java.io.IOException;
 @Configuration
 public class RedisConfig {
     /** 集群节点配置 */
+    @Value("${spring.redis.host}")
+    public String host;
+    @Value("${spring.redis.port}")
+    public String port;
     @Value("${spring.redis.password}")
     public String password;
 
@@ -65,12 +66,17 @@ public class RedisConfig {
 //                .setDatabase(0);
         // return (Redisson) Redisson.create(config);
         // 集群模式
+//        Config config = new Config();
+//        config.useClusterServers()
+//                .addNodeAddress(
+//                        "redis://119.91.208.25:6000",
+//                        "redis://119.91.210.79:6000",
+//                        "redis://119.91.20.241:6000")
+//                .setPassword(password);
+//        config.setCodec(new StringCodec());
         Config config = new Config();
-        config.useClusterServers()
-                .addNodeAddress(
-                        "redis://119.91.208.25:6000",
-                        "redis://119.91.210.79:6000",
-                        "redis://119.91.20.241:6000")
+        config.useSingleServer()
+                .setAddress("redis://" + host + ":" + port)
                 .setPassword(password);
         config.setCodec(new StringCodec());
         return (Redisson) Redisson.create(config);

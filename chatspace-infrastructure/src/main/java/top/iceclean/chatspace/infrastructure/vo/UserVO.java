@@ -32,7 +32,8 @@ public class UserVO {
         this.userName = user.getUserName();
         this.sex = user.getSex();
         this.nickName = user.getNickName();
-        this.avatar = user.getAvatar();
+        // 加上路径
+        this.avatar = "../img/avatar/" + user.getAvatar();
         this.email = user.getEmail();
         this.online = online;
     }

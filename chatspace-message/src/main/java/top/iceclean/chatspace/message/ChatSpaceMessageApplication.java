@@ -3,6 +3,8 @@ package top.iceclean.chatspace.message;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import top.iceclean.chatspace.cache.annotation.EnableCache;
 import top.iceclean.chatspace.infrastructure.annotation.EnableInfrastructure;
 import top.iceclean.feign.FriendClient;

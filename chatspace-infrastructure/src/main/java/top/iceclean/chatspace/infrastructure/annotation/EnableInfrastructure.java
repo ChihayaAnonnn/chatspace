@@ -2,6 +2,7 @@ package top.iceclean.chatspace.infrastructure.annotation;
 
 import org.springframework.context.annotation.Import;
 import top.iceclean.chatspace.infrastructure.auth.UserAuth;
+import top.iceclean.chatspace.infrastructure.common.Monitor;
 import top.iceclean.chatspace.infrastructure.config.*;
 import top.iceclean.chatspace.infrastructure.handler.GlobalExceptionHandler;
 import top.iceclean.chatspace.infrastructure.utils.*;
@@ -22,6 +23,6 @@ import java.lang.annotation.Target;
         MybatisPlusConfig.class, MyPrometheusConfig.class, NacosConfig.class,
         RedisConfig.class, IdWorkerConfig.class,
         GlobalExceptionHandler.class,
-        GeoUtils.class, MailUtils.class, RedissonUtils.class, RedisTemplateUtils.class})
+        GeoUtils.class, MailUtils.class, RedissonUtils.class, RedisTemplateUtils.class, Monitor.class})
 public @interface EnableInfrastructure {
 }

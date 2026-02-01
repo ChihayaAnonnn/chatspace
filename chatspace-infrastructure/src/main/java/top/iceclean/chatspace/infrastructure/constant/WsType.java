@@ -43,6 +43,8 @@ public enum WsType {
 
     /** 请求建立聊天 */
     CHAT_REQUEST_SYN,
+    /** 请求失败，对方看不见当前用户，请求不可达 */
+    CHAT_REQUEST_UNREACHABLE,
     /** 请求建立聊天回复消息 */
     CHAT_REQUEST_SYN_ACK,
     /** 请求退出聊天 */

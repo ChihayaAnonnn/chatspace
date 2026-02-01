@@ -8,8 +8,10 @@ import top.iceclean.chatspace.realtime.share.ServerSession;
  * @date : 2022-10-28
  */
 public class ChannelKey {
+    /** 初始化状态常量 */
+    public static final AttributeKey<Boolean> INIT_STATE = AttributeKey.valueOf("INIT_STATE");
     /** 权限校验常量 */
-    public static final AttributeKey<String> TOKEN = AttributeKey.valueOf("token");
+    public static final AttributeKey<String> TOKEN = AttributeKey.valueOf("TOKEN");
     /** 通过通道获取用户 ID 的 KEY */
     public static final AttributeKey<Integer> USER_ID_KEY = AttributeKey.valueOf("USER_ID_KEY");
     /** 通过通道获取会话的 KEY */

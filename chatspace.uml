@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>DATABASE</ID>
+  <OriginalElement>c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_box</OriginalElement>
+  <nodes>
+    <node x="0.0" y="701.0">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_meta_item</node>
+    <node x="7.5" y="1028.5">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_item</node>
+    <node x="737.2236842105262" y="1341.5">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_user_group</node>
+    <node x="3.223684210526301" y="1353.0">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_box_item</node>
+    <node x="335.2236842105263" y="1330.0">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_session_request</node>
+    <node x="176.3907894736842" y="46.0">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_space</node>
+    <node x="108.51578947368421" y="373.5">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_site</node>
+    <node x="299.5157894736842" y="293.0">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_zone</node>
+    <node x="966.7236842105262" y="1017.0">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_session</node>
+    <node x="546.2236842105262" y="1330.0">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_friend</node>
+    <node x="486.20394736842104" y="948.0">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_user</node>
+    <node x="149.2236842105263" y="1353.0">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_box_hunt</node>
+    <node x="476.0157894736842" y="0.0">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_group</node>
+    <node x="340.7657894736842" y="701.0">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_box</node>
+    <node x="928.2236842105262" y="1341.5">c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_message</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_item" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_meta_item">
+      <point x="0.0" y="-75.5" />
+      <point x="0.0" y="98.5" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_user_group" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_group">
+      <point x="42.75" y="-98.5" />
+      <point x="865.4736842105262" y="268.0" />
+      <point x="608.7657894736842" y="268.0" />
+      <point x="44.25" y="121.5" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_box_hunt" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_item">
+      <point x="-41.5" y="-87.0" />
+      <point x="190.7236842105263" y="1280.0" />
+      <point x="136.5" y="1280.0" />
+      <point x="43.0" y="75.5" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_box_item" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_box">
+      <point x="31.5" y="-87.0" />
+      <point x="97.7236842105263" y="1290.0" />
+      <point x="286.9105263157895" y="1290.0" />
+      <point x="286.9105263157895" y="923.0" />
+      <point x="383.5157894736842" y="923.0" />
+      <point x="-42.75" y="98.5" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_session_request" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_user">
+      <point x="0.0" y="-110.0" />
+      <point x="430.7236842105263" y="1310.0" />
+      <point x="537.8039473684211" y="1310.0" />
+      <point x="-34.39999999999998" y="156.0" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_friend" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_user">
+      <point x="0.0" y="-110.0" />
+      <point x="631.7236842105262" y="1310.0" />
+      <point x="572.203947368421" y="1310.0" />
+      <point x="0.0" y="156.0" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_zone" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_group">
+      <point x="42.25" y="-179.0" />
+      <point x="426.2657894736842" y="268.0" />
+      <point x="520.2657894736842" y="268.0" />
+      <point x="-44.25" y="121.5" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_box_hunt" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_user">
+      <point x="41.5" y="-87.0" />
+      <point x="273.7236842105263" y="1300.0" />
+      <point x="503.4039473684211" y="1300.0" />
+      <point x="-68.80000000000001" y="156.0" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_box_item" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_item">
+      <point x="-31.5" y="-87.0" />
+      <point x="34.7236842105263" y="1310.0" />
+      <point x="50.5" y="1310.0" />
+      <point x="-43.0" y="75.5" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_message" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_user">
+      <point x="-41.5" y="-98.5" />
+      <point x="969.7236842105262" y="1290.0" />
+      <point x="641.0039473684211" y="1290.0" />
+      <point x="68.80000000000001" y="156.0" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_zone" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_zone">
+      <point x="-42.25" y="179.0" />
+      <point x="341.7657894736842" y="671.0" />
+      <point x="279.5157894736842" y="671.0" />
+      <point x="279.5157894736842" y="472.0" />
+      <point x="-84.5" y="-0.0" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_message" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_session">
+      <point x="41.5" y="-98.5" />
+      <point x="0.0" y="87.0" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_box" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_zone">
+      <point x="0.0" y="-98.5" />
+      <point x="42.25" y="179.0" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_zone" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_space">
+      <point x="-42.25" y="-179.0" />
+      <point x="341.7657894736842" y="268.0" />
+      <point x="306.1407894736842" y="268.0" />
+      <point x="43.25" y="75.5" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_site" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_space">
+      <point x="0.0" y="-98.5" />
+      <point x="184.0157894736842" y="268.0" />
+      <point x="219.6407894736842" y="268.0" />
+      <point x="-43.25" y="75.5" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_user" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_box">
+      <point x="-5.6843418860808015E-14" y="-156.0" />
+      <point x="572.203947368421" y="923.0" />
+      <point x="469.0157894736842" y="923.0" />
+      <point x="42.75" y="98.5" />
+    </edge>
+    <edge source="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_user_group" target="c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_user">
+      <point x="-42.75" y="-98.5" />
+      <point x="779.9736842105262" y="1300.0" />
+      <point x="606.6039473684211" y="1300.0" />
+      <point x="34.400000000000034" y="156.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.4229299363057325" x="569.5" y="775.0" />
+  <SelectedNodes>
+    <node>c5f22d81-b434-46d3-a064-da5a74cc297d.TABLE:chat_space_v2.t_box</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Key columns</Category>
+    <Category>Columns</Category>
+    <Category>Virtual foreign keys</Category>
+  </Categories>
+</Diagram>
+

@@ -14,7 +14,7 @@ import top.iceclean.chatspace.gateway.loadbalance.ConsistentHashingConfig;
  * @date : 2022-10-08
  */
 @SpringBootApplication
-@LoadBalancerClients(defaultConfiguration = ConsistentHashingConfig.class)
+// @LoadBalancerClients(defaultConfiguration = ConsistentHashingConfig.class)
 public class ChatSpaceGatewayApplication {
     public static void main(String[] args) {
         SpringApplication.run(ChatSpaceGatewayApplication.class, args);

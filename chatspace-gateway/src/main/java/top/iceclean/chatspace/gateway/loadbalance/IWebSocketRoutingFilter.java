@@ -40,7 +40,7 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.*
  */
 @Slf4j
 @NonNullApi
-@Component
+// @Component
 public class IWebSocketRoutingFilter implements GlobalFilter, Ordered {
 
     /**
@@ -197,7 +197,7 @@ public class IWebSocketRoutingFilter implements GlobalFilter, Ordered {
 
         /** 连接关闭后，从哈希环上移除用户连接 */
         private void removeUserRing() {
-            consistentHashing.userRemove(userId);
+            consistentHashing.userRemove(url.getHost() + ":" + url.getPort(), userId);
         }
 
         private Publisher<WebSocketMessage> proxySessionSendHandle(WebSocketSession session) {

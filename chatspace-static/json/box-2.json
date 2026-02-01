@@ -1,0 +1,437 @@
+{
+  "type": "grid-2d",
+  "id": "u:cdfd5be40d0c",
+  "style": {
+    "height": "100%",
+    "grid-template-rows": "1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;"
+  },
+  "className": "h-full my-class",
+  "gap": 0,
+  "grids": [
+    {
+      "type": "container",
+      "id": "u:e1ea5904887f",
+      "x": 1,
+      "y": 2,
+      "h": 12,
+      "w": 3,
+      "style": {
+        "height": "100%",
+        "marginTop": "",
+        "paddingRight": "",
+        "marginRight": "-0.05em",
+        "paddingTop": "",
+        "opacity": 1,
+        "marginBottom": "",
+        "marginLeft": "",
+        "paddingBottom": "",
+        "backgroundColor": "",
+        "border-right": "1px solid #58595a",
+        "position": "static",
+        "display": "block",
+        "borderLeftStyle": "solid",
+        "borderTopStyle": "solid",
+        "borderRightStyle": "solid",
+        "borderBottomStyle": "solid",
+        "borderLeftColor": "#444444",
+        "borderTopColor": "#444444",
+        "borderRightColor": "#444444",
+        "borderBottomColor": "#444444",
+        "borderTopLeftRadius": 0,
+        "borderTopRightRadius": 0,
+        "borderBottomLeftRadius": 0,
+        "borderBottomRightRadius": 0,
+        "borderLeftWidth": 1,
+        "borderTopWidth": 1,
+        "borderRightWidth": 1,
+        "borderBottomWidth": 1
+      },
+      "body": [
+        {
+          "type": "button",
+          "id": "userBox",
+          "label": "随身背包",
+          "name": "userBox",
+          "className": "userBox",
+          "onEvent": {
+            "click": {
+              "actions": [
+              ]
+            }
+          },
+          "block": true
+        },
+        {
+          "type": "service",
+          "body": [
+            {
+              "type": "list",
+              "className": "userItemList",
+              "source": "$userItemList",
+              "listItem": {
+                "body": [
+                  {
+                    "type": "container",
+                    "body": [
+                      {
+                        "type": "grid",
+                        "columns": [
+                          {
+                            "body": [
+                              {
+                                "type": "tpl",
+                                "tpl": "<strong>$itemName</strong>  <small>$aliasName</small>",
+                                "inline": true,
+                                "id": "u:54c4a5c94d53",
+                                "wrapperComponent": "div",
+                                "style": {
+                                  "fontSize": "16px"
+                                }
+                              }
+                            ],
+                            "md": "",
+                            "valign": "middle"
+                          },
+                          {
+                            "body": [
+                              {
+                                "type": "tpl",
+                                "tpl": "$amount",
+                                "inline": false,
+                                "style": {
+                                  "text-align": "right"
+                                }
+                              }
+                            ],
+                            "md": "auto",
+                            "valign": "middle"
+                          }
+                        ]
+                      }
+                    ],
+                    "style": {
+                    },
+                    "className": "p-l-sm p-r-sm"
+                  }
+                ],
+                "actions": [
+                ]
+              },
+              "showHeader": true,
+              "showFooter": true,
+              "itemAction": {
+                "type": "action",
+                "actionType": "reload",
+                "target": "itemDetailService?boxItemId=${boxItemId}"
+              },
+              "id": "u:e64066c8766a"
+            }
+          ],
+          "id": "userItemListService"
+        }
+      ],
+      "className": "overflow-y-auto h-full",
+      "isFixedHeight": false,
+      "isFixedWidth": false
+    },
+    {
+      "x": 4,
+      "y": 2,
+      "h": 12,
+      "w": 3,
+      "type": "container",
+      "id": "u:e1ea5904887f",
+      "body": [
+        {
+          "type": "button",
+          "id": "boxOpen",
+          "label": "打开箱子",
+          "name": "boxOpen",
+          "className": "boxOpen",
+          "onEvent": {
+            "click": {
+              "actions": [
+              ]
+            }
+          },
+          "block": true
+        },
+        {
+          "type": "service",
+          "body": [
+            {
+              "type": "list",
+              "className": "itemList",
+              "source": "$itemList",
+              "listItem": {
+                "body": [
+                  {
+                    "type": "container",
+                    "body": [
+                      {
+                        "type": "grid",
+                        "columns": [
+                          {
+                            "body": [
+                              {
+                                "type": "tpl",
+                                "tpl": "<strong>$itemName</strong>  <small>$aliasName</small>",
+                                "inline": true,
+                                "id": "u:54c4a5c94d53",
+                                "wrapperComponent": "div",
+                                "style": {
+                                  "fontSize": "16px"
+                                }
+                              }
+                            ],
+                            "md": "",
+                            "valign": "middle"
+                          },
+                          {
+                            "body": [
+                              {
+                                "type": "tpl",
+                                "tpl": "$amount",
+                                "inline": false,
+                                "style": {
+                                  "text-align": "right"
+                                }
+                              }
+                            ],
+                            "md": "auto",
+                            "valign": "middle"
+                          }
+                        ]
+                      }
+                    ],
+                    "style": {
+                    },
+                    "className": "p-l-sm p-r-sm"
+                  }
+                ],
+                "actions": [
+                ]
+              },
+              "showHeader": true,
+              "showFooter": true,
+              "itemAction": {
+                "type": "action",
+                "actionType": "reload",
+                "active": true,
+                "activeLevel": {
+                  "background": "#fff300"
+                },
+                "target": "itemDetailService?boxItemId=${boxItemId}"
+              },
+              "id": "u:e64066c8766a"
+            }
+          ],
+          "id": "itemListService"
+        }
+      ],
+      "style": {
+        "height": "100%",
+        "marginRight": "-0.05em",
+        "opacity": 1,
+        "border-right": "1px solid #58595a",
+        "position": "static",
+        "display": "block",
+        "borderLeftWidth": 1,
+        "borderTopWidth": 1,
+        "borderRightWidth": 1,
+        "borderBottomWidth": 1,
+        "borderLeftColor": "#444444",
+        "borderTopColor": "#444444",
+        "borderRightColor": "#444444",
+        "borderBottomColor": "#444444",
+        "borderLeftStyle": "solid",
+        "borderTopStyle": "solid",
+        "borderRightStyle": "solid",
+        "borderBottomStyle": "solid",
+        "marginTop": "",
+        "paddingRight": "",
+        "paddingTop": "",
+        "marginBottom": "",
+        "marginLeft": "",
+        "paddingBottom": "",
+        "backgroundColor": "",
+        "borderTopLeftRadius": 0,
+        "borderTopRightRadius": 0,
+        "borderBottomLeftRadius": 0,
+        "borderBottomRightRadius": 0
+      },
+      "className": "overflow-y-auto h-full",
+      "isFixedHeight": false,
+      "isFixedWidth": false
+    },
+    {
+      "x": 7,
+      "y": 2,
+      "h": 12,
+      "w": 6,
+      "type": "container",
+      "id": "u:e1ea5904887f",
+      "body": [
+        {
+          "type": "grid",
+          "columns": [
+            {
+              "body": [
+                {
+                  "type": "button",
+                  "id": "moveOne",
+                  "label": "移动 1 个",
+                  "name": "moveOne",
+                  "className": "moveOne",
+                  "onEvent": {
+                    "click": {
+                      "actions": [
+                      ]
+                    }
+                  },
+                  "block": true
+                }
+              ],
+              "id": "u:d7068b394e11"
+            },
+            {
+              "body": [
+                {
+                  "type": "button",
+                  "id": "moveAll",
+                  "label": "移动全部",
+                  "name": "moveAll",
+                  "className": "moveAll",
+                  "onEvent": {
+                    "click": {
+                      "actions": [
+                      ]
+                    }
+                  },
+                  "block": true
+                }
+              ],
+              "id": "u:203c92595589"
+            }
+          ],
+          "id": "u:c04ef6788d8e"
+        },
+        {
+          "type": "service",
+          "id": "itemDetailService",
+          "body": [
+            {
+              "type": "container",
+              "body": [
+                {
+                  "type": "container",
+                  "body": [
+                    {
+                      "type": "tpl",
+                      "tpl": "<strong>$itemName</strong> <small>$item.aliasName</small>",
+                      "wrapperComponent": "div",
+                      "style": {
+                        "fontSize": "18px"
+                      },
+                      "id": "u:22a017de3aa1"
+                    },
+                    {
+                      "type": "tpl",
+                      "tpl": "$itemIntro",
+                      "wrapperComponent": "div",
+                      "style": {
+                        "fontSize": "15px"
+                      },
+                      "id": "u:0957c0d9040a"
+                    },
+                    {
+                      "type": "divider",
+                      "id": "u:1085b52660fe",
+                      "className": "m-t m-b"
+                    },
+                    {
+                      "type": "container",
+                      "className": "overflow-y-auto",
+                      "body": [
+                        {
+                          "type": "tpl",
+                          "tpl": "${parsedExtend|raw}",
+                          "scrollable": true,
+                          "wrapperComponent": "div",
+                          "style": {
+                            "fontSize": "15px",
+                            "height": "550px",
+                            "overflowX": "hidden",
+                            "overflowY": "scroll"
+                          },
+                          "id": "u:e081c6c2bc33"
+                        }
+                      ],
+                      "style": {
+                        "position": "static",
+                        "display": "block",
+                        "zIndex": 0
+                      },
+                      "id": "u:5867bfd13c8f",
+                      "isFixedHeight": false,
+                      "isFixedWidth": false,
+                      "stickyStatus": false
+                    }
+                  ],
+                  "style": {
+                    "textAlign": "left"
+                  },
+                  "id": "u:99c5bc679cae"
+                }
+              ],
+              "style": {
+                "textAlign": "center"
+              },
+              "className": "m-t-lg",
+              "id": "u:a23b9160f86e"
+            }
+          ],
+          "messages": {
+          },
+          "api": {
+            "url": "https://chatspace.iceclean.top/space/zone/box/item/detail/$boxItemId",
+            "method": "get",
+            "messages": {
+              "failed": ""
+            },
+            "headers": {
+              "admin-tag": 1,
+              "auth-user": 1049
+            }
+          },
+          "initFetch": false
+        }
+      ],
+      "style": {
+        "height": "100%",
+        "marginRight": "-0.05em",
+        "opacity": 1,
+        "border-right": "1px solid #58595a",
+        "position": "static",
+        "display": "block",
+        "borderLeftWidth": 1,
+        "borderTopWidth": 1,
+        "borderRightWidth": 1,
+        "borderBottomWidth": 1,
+        "borderLeftColor": "#444444",
+        "borderTopColor": "#444444",
+        "borderRightColor": "#444444",
+        "borderBottomColor": "#444444",
+        "borderLeftStyle": "solid",
+        "borderTopStyle": "solid",
+        "borderRightStyle": "solid",
+        "borderBottomStyle": "solid",
+        "paddingLeft": "20px",
+        "paddingRight": "20px"
+      },
+      "className": "h-full",
+      "isFixedHeight": false,
+      "isFixedWidth": false
+    }
+  ]
+}

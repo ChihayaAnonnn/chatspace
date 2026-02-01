@@ -1,0 +1,13 @@
+
+server:
+  port: ${SERVER_PORT:19012}
+  servlet:
+    context-path: /space
+
+spring:
+  profiles:
+    include: shared
+
+management:
+  server:
+    port: 10012

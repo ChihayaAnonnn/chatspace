@@ -18,7 +18,7 @@ import top.iceclean.chatspace.infrastructure.vo.SiteVO;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("t_site")
-public class Site {
+public class    Site {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private Integer spaceId;
@@ -28,7 +28,7 @@ public class Site {
     private Integer exist;
 
     public Site(SiteVO siteVO) {
-        this.id = siteVO.getUser().getUserId();
+        this.id = siteVO.getUserId();
         this.spaceId = siteVO.getSpaceId();
         this.x = siteVO.getX();
         this.y = siteVO.getY();

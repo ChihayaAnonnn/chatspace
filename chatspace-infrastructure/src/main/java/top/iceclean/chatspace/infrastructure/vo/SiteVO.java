@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import top.iceclean.chatspace.infrastructure.dto.SiteDTO;
 import top.iceclean.chatspace.infrastructure.po.Site;
 
+import java.util.Objects;
+
 /**
  * 用户位置响应对象
  * @author : Ice'Clean
@@ -13,27 +15,24 @@ import top.iceclean.chatspace.infrastructure.po.Site;
 @Data
 @NoArgsConstructor
 public class SiteVO {
-    private UserVO user;
+    private Integer userId;
     private Integer spaceId;
     private Integer x;
     private Integer y;
     private Integer vision;
     private Integer exist;
 
-    /** 是否为当前用户的好友 */
-    private Boolean isFriend;
-
-    public SiteVO(SiteDTO site, UserVO user) {
-        this.user = user;
-        this.spaceId = site.getSpaceId();
+    public SiteVO(SiteDTO site, int spaceId, int userId) {
+        this.userId = userId;
+        this.spaceId = spaceId;
         this.x = site.getX();
         this.y = site.getY();
         this.vision = site.getVision();
         this.exist = site.getExist();
     }
 
-    public SiteVO(Site site, UserVO user) {
-        this.user = user;
+    public SiteVO(Site site, int userId) {
+        this.userId = userId;
         this.spaceId = site.getSpaceId();
         this.x = site.getX();
         this.y = site.getY();
@@ -42,7 +41,7 @@ public class SiteVO {
     }
 
     /** 更新当前位置 */
-    public void updateSite(SiteDTO site) {
+    public void updateSite(SiteVO site) {
         this.spaceId = site.getSpaceId();
         this.x = site.getX();
         this.y = site.getY();
@@ -50,9 +49,8 @@ public class SiteVO {
         this.exist = site.getExist();
     }
 
-    /** 设置好友属性 */
-    public SiteVO setFriend(Boolean friend) {
-        isFriend = friend;
-        return this;
+    public static boolean isVisionOrExistChanged(SiteVO site1, SiteVO site2) {
+        return !Objects.equals(site1.getVision(), site2.getVision()) ||
+                !Objects.equals(site1.getExist(), site2.getExist());
     }
 }

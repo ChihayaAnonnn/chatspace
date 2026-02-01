@@ -1,0 +1,106 @@
+{
+  "type": "container",
+  "id": "u:e1ea5904887f",
+  "x": 1,
+  "y": 2,
+  "h": 12,
+  "w": 4,
+  "style": {
+    "height": "100%",
+    "marginTop": "",
+    "paddingRight": "",
+    "marginRight": "-0.05em",
+    "paddingTop": "",
+    "opacity": 1,
+    "marginBottom": "",
+    "marginLeft": "",
+    "paddingBottom": "",
+    "backgroundColor": "",
+    "borderRight": "1px solid #58595a"
+  },
+  "body": [
+    {
+      "body": [
+        {
+          "type": "list",
+          "className": "itemList",
+          "source": "$itemList",
+          "listItem": {
+            "body": [
+              {
+                "type": "container",
+                "body": [
+                  {
+                    "type": "grid",
+                    "columns": [
+                      {
+                        "body": [
+                          {
+                            "type": "tpl",
+                            "tpl": "$itemName",
+                            "inline": true,
+                            "id": "u:54c4a5c94d53",
+                            "wrapperComponent": "div",
+                            "style": {
+                              "fontSize": "15px",
+                              "fontWeight": "bold"
+                            }
+                          },
+                          {
+                            "type": "tpl",
+                            "tpl": "$aliasName",
+                            "inline": true,
+                            "id": "u:ddccd99b2cc3",
+                            "style": {
+                              "fontSize": "9px",
+                              "paddingTop": "",
+                              "color": "#9b9b9b"
+                            }
+                          }
+                        ],
+                        "md": "",
+                        "valign": "middle"
+                      },
+                      {
+                        "body": [
+                          {
+                            "type": "tpl",
+                            "tpl": "$amount",
+                            "inline": false,
+                            "style": {
+                              "text-align": "right"
+                            }
+                          }
+                        ],
+                        "md": "auto",
+                        "valign": "middle"
+                      }
+                    ]
+                  }
+                ],
+                "id": "u:15efbcc31e55",
+                "style": {
+                },
+                "className": "p-l p-r-sm"
+              }
+            ],
+            "actions": [
+            ],
+            "avatarClassName": "thumb-sm avatar m-r"
+          },
+          "showHeader": true,
+          "showFooter": true,
+          "itemAction": {
+            "type": "action",
+            "actionType": "reload",
+            "target": "itemDetailService?boxItemId=${boxItemId}"
+          }
+        }
+      ],
+      "type": "service",
+      "className": "overflow-y-auto m-t-sm",
+      "id": "itemListService"
+    }
+  ],
+  "className": "overflow-y-auto h-full"
+}

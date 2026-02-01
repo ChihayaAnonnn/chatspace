@@ -27,9 +27,7 @@ import top.iceclean.chatspace.infrastructure.vo.UserVO;
 import top.iceclean.chatspace.user.mapper.UserMapper;
 import top.iceclean.chatspace.user.service.UserService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -108,44 +106,54 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public void noviceComing() {
+        updateUserAvatar("1.png");
+    }
+
+    @Override
     public Response uploadAvatar(MultipartFile avatar) {
         // 将用户查询出来
         User user = getCurrentUser();
-
-        // 上传头像（以用户ID-当前时间-头像大小命名）
-        String extentName = avatar.getOriginalFilename();
-        extentName = Objects.requireNonNull(extentName).substring(extentName.lastIndexOf("."));
-        String avatarName = String.format("%d_%s_%d%s", user.getId(), DateUtils.getTimeCompact(),
-                avatar.getSize(), extentName);
-        FileConst.Code code = FileUtils.upload(avatar, FileConst.AVATAR_PATH, avatarName);
+        // 先删除原头像
+        FileUtils.deleteFromHuaWeiObs(FileConst.AVATAR_PATH, user.getAvatar());
+        // 上传新头像（以用户ID-当前时间-头像大小命名）
+        String avatarName = FileUtils.generateFileName(avatar, "" + user.getId());
+        FileConst.Code code = FileUtils.uploadToHuaWeiObs(avatar, FileConst.AVATAR_PATH, avatarName);
 
         // 上传成功时修改头像
         if (code == FileConst.Code.UPLOAD_SUCCESS) {
-            user.setAvatar("../" + FileConst.AVATAR_PATH + avatarName);
-            userMapper.updateById(user);
+            updateUserAvatar(avatarName);
             return new Response(ResponseStatusEnum.OK)
                     .setMsg(code.getMsg())
                     .addData("avatarName", avatarName);
         }
-
         // 上传失败时返回错误信息
         return new Response(ResponseStatusEnum.INTERNAL_SERVER_ERROR).setMsg(code.getMsg());
+    }
+
+    /**
+     * 更新用户头像名称（缓存和数据库）
+     * @param avatarName 头像名称
+     */
+    private void updateUserAvatar(String avatarName) {
+        // 更新数据库
+        User user = new User();
+        user.setId(getCurrentUser().getId());
+        user.setAvatar(avatarName);
+        userMapper.updateById(user);
+        // 更新缓存
+        UserAuthority userAuthority = ((UserAuthority) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        userCache.updateUserById(user.getId(), JSON.toJSONString(userAuthority));
     }
 
     @Override
     public Response updateInfo(UserDTO userDTO) {
         // 拿到用户信息
-        User user = getCurrentUser();
-
-        // 修改性别
-        if (userDTO.getSex() != null) {
-            user.setSex(userDTO.getSex());
-        }
-
-        // 修改昵称
-        if (userDTO.getNickName() != null) {
-            user.setNickName(userDTO.getNickName());
-        }
+        User user = new User();
+        user.setId(getCurrentUser().getId());
+        // 修改性别或昵称
+        user.setSex(userDTO.getSex());
+        user.setNickName(userDTO.getNickName());
 
         // 执行修改并返回结果
         if (userMapper.updateById(user) == 1) {

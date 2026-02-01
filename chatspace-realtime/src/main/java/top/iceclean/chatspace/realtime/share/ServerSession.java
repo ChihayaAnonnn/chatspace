@@ -6,10 +6,6 @@ import top.iceclean.chatspace.infrastructure.po.User;
 import top.iceclean.chatspace.infrastructure.vo.SiteVO;
 import top.iceclean.chatspace.infrastructure.vo.UserVO;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * 会话类
  * @author : Ice'Clean
@@ -22,37 +18,30 @@ public class ServerSession {
     private final UserVO user;
     /** 用户位置信息 */
     private final SiteVO site;
-    /** 用户的视野集合（用户能看见的其他用户的 ID） */
-    private final Set<Integer> visionSet;
-    /** 用户的存在感集合（能看见该用户的其他用户的 ID） */
-    private final Set<Integer> existSet;
+    /** 用户是否在线，false 即为下线中 */
+    private boolean online;
 
     public ServerSession(Channel channel, User user, Site site) {
         this.channel = channel;
         this.user = new UserVO(user, true);
-        this.site = new SiteVO(site, this.user);
-        this.visionSet = new HashSet<>();
-        this.existSet = new HashSet<>();
+        this.site = new SiteVO(site, user.getId());
+        this.online = true;
+    }
+
+    public void offline() {
+        this.online = false;
     }
 
     public UserVO getUser() {
-        return user;
+        return online ? user : null;
     }
 
     public Channel getChannel() {
-        return channel;
+        return online ? channel : null;
     }
 
     public SiteVO getSite() {
-        return site;
-    }
-
-    public Set<Integer> getVisionSet() {
-        return visionSet;
-    }
-
-    public Set<Integer> getExistSet() {
-        return existSet;
+        return online ? site : null;
     }
 
     @Override
@@ -61,8 +50,6 @@ public class ServerSession {
                 "channel=" + channel +
                 ", user=" + user +
                 ", site=" + site +
-                ", visionSet=" + visionSet +
-                ", existSet=" + existSet +
                 '}';
     }
 }

@@ -20,6 +20,14 @@ public class CastController {
     /** 空间消息处理 */
     private final SpaceProcessor spaceProcessor;
 
+    public static int total = 0;
+    public static int initialized = 0;
+
+    @GetMapping("/init")
+    public String testInit() {
+        return total + " " + initialized;
+    }
+
     @Autowired
     public CastController(SpaceProcessor spaceProcessor) {
         this.spaceProcessor = spaceProcessor;

@@ -1,0 +1,17 @@
+
+version: '3.8'
+services:
+  group1:
+    build:
+      args:
+        NACOS_IP: $NACOS_IP
+        HOST_IP: $HOST_IP
+        SERVER_PORT: 19013
+        JVM_PORT: 19014
+        MANAGEMENT_PORT: 19015
+      context: ./chatspace-group
+      dockerfile: Dockerfile
+    ports:
+      - "19013:19013"
+      - "19014:19014"
+      - "19015:19015"

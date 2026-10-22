@@ -19,7 +19,8 @@ import top.iceclean.chatspace.infrastructure.vo.SiteVO;
 @AllArgsConstructor
 @TableName("t_site")
 public class    Site {
-    @TableId(value = "id", type = IdType.AUTO)
+    /** 主键由应用显式写入（id = userId），不能交给数据库自增 */
+    @TableId(value = "id", type = IdType.INPUT)
     private Integer id;
     private Integer spaceId;
     private Integer x;

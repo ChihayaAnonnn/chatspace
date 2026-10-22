@@ -21,7 +21,7 @@ public interface BoxItemMapper extends BaseMapper<BoxItem> {
      * @param boxId 箱子 ID
      * @return 箱子物品列表
      */
-    @Select("select box_item.id as box_item_id, box_idx, item_name, item_extend->>'$.name' as alias_name, amount " +
+    @Select("select box_item.box_item_id, box_idx, item_name, item_extend->>'name' as alias_name, amount " +
             "from t_box_item box_item " +
             "join t_item item on box_item.item_id = item.id " +
             "join t_meta_item meta on item.meta_item_id = meta.id " +
@@ -37,7 +37,7 @@ public interface BoxItemMapper extends BaseMapper<BoxItem> {
             "from t_box_item box_item " +
             "join t_item item on box_item.item_id = item.id " +
             "join t_meta_item meta on item.meta_item_id = meta.id " +
-            "where box_item.id = #{boxItemId}")
+            "where box_item.box_item_id = #{boxItemId}")
     Item getItemDetail(int boxItemId);
 
     /**
@@ -50,7 +50,7 @@ public interface BoxItemMapper extends BaseMapper<BoxItem> {
             "from t_box_item box_item " +
             "join t_item item on box_item.item_id = item.id " +
             "join t_meta_item meta on item.meta_item_id = meta.id " +
-            "where box_item.id = #{boxItemId}")
+            "where box_item.box_item_id = #{boxItemId}")
     List<Item> getItemsByType(int boxId, int metaItemId);
 
     /**

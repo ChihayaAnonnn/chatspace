@@ -11,11 +11,11 @@ import java.util.List;
  * @author : Ice'Clean
  * @date : 2023-01-23
  */
-// @Component
-// @ConfigurationProperties(prefix = "consistent-hashing")
+@Component
+@ConfigurationProperties(prefix = "consistent-hashing")
 public class ConsistentHashingProperties {
     /** 需要使用一致性哈希负载算法分配服务节点的请求 */
-    private List<String> websocketUrls = new ArrayList<>();
+    private List<String> websocketUrls = new ArrayList<>(java.util.Collections.singletonList("/space/ws/chat"));
     private List<String> httpUrls = new ArrayList<>();
 
     public List<String> getWebsocketUrls() {

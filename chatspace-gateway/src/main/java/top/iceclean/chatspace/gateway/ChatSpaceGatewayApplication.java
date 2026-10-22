@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients;
+import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
 import org.springframework.context.annotation.Bean;
 import top.iceclean.chatspace.gateway.loadbalance.ConsistentHashingConfig;
 
@@ -14,7 +14,7 @@ import top.iceclean.chatspace.gateway.loadbalance.ConsistentHashingConfig;
  * @date : 2022-10-08
  */
 @SpringBootApplication
-// @LoadBalancerClients(defaultConfiguration = ConsistentHashingConfig.class)
+@LoadBalancerClient(name = "chatspace-netty", configuration = ConsistentHashingConfig.class)
 public class ChatSpaceGatewayApplication {
     public static void main(String[] args) {
         SpringApplication.run(ChatSpaceGatewayApplication.class, args);

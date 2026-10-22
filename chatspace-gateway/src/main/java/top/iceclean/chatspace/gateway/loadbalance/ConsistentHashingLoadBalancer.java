@@ -10,6 +10,7 @@ import org.springframework.cloud.loadbalancer.core.SelectedInstanceCallback;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import top.iceclean.chatspace.gateway.common.SecProtocolException;
 import top.iceclean.chatspace.gateway.loadbalance.hash.ConsistentHashing;
 import top.iceclean.chatspace.gateway.utils.JwtUtils;
@@ -50,10 +51,11 @@ public class ConsistentHashingLoadBalancer extends RandomLoadBalancer {
         DefaultRequestContext requestContext = (DefaultRequestContext) request.getContext();
         RequestData clientRequest = (RequestData) requestContext.getClientRequest();
         String uri = clientRequest.getUrl().getPath();
+        log.debug("一致性哈希路由检查 path={}, configured={}", uri, properties.getWebsocketUrls());
 
         // 处理 http 负载均衡
         if (properties.getHttpUrls().contains(uri)) {
-            return httpChoose(clientRequest);
+            return super.choose(request);
         }
 
         // 处理 websocket 负载均衡
@@ -63,11 +65,6 @@ public class ConsistentHashingLoadBalancer extends RandomLoadBalancer {
 
         // 没有在配置文件中指定的请求，使用默认负载算法
         return super.choose(request);
-    }
-
-    private Mono<Response<ServiceInstance>> httpChoose(RequestData clientRequest) {
-        // 暂时还没有 http 需要一致性哈希负载均衡
-        return null;
     }
 
     @SuppressWarnings("rawtypes")
@@ -80,7 +77,7 @@ public class ConsistentHashingLoadBalancer extends RandomLoadBalancer {
             throw new SecProtocolException("WebSocket 连接缺失子协议");
         }
         // 取出用户 ID 和目标空间 ID
-        String[] split = list.get(0).split(", ");
+        String[] split = String.join(",", list).split("\\s*,\\s*");
         if (split.length < 2) {
             // 子协议错误
             log.error("WebSocket 子协议错误：{}", Arrays.toString(split));
@@ -100,28 +97,30 @@ public class ConsistentHashingLoadBalancer extends RandomLoadBalancer {
         // 获取所有 Netty 服务
         ServiceInstanceListSupplier supplier = serviceInstanceListSupplierProvider
                 .getIfAvailable(NoopServiceInstanceListSupplier::new);
-        return supplier.get(request).next().map(serviceInstances ->
-                processInstanceResponse(supplier, serviceInstances, userId, spaceId));
+        String lease = clientRequest.getHeaders().getFirst("hash-connection-id");
+        return supplier.get(request).next().flatMap(serviceInstances ->
+                Mono.fromCallable(() -> processInstanceResponse(supplier, serviceInstances, userId, spaceId, lease))
+                        .subscribeOn(Schedulers.boundedElastic()));
     }
 
     private Response<ServiceInstance> processInstanceResponse(ServiceInstanceListSupplier supplier,
                                                               List<ServiceInstance> serviceInstances,
-                                                              String userId, String spaceId) {
-        Response<ServiceInstance> serviceInstanceResponse = getInstanceResponse(serviceInstances, userId, spaceId);
+                                                              String userId, String spaceId, String lease) {
+        Response<ServiceInstance> serviceInstanceResponse = getInstanceResponse(serviceInstances, userId, spaceId, lease);
         if (supplier instanceof SelectedInstanceCallback && serviceInstanceResponse.hasServer()) {
             ((SelectedInstanceCallback) supplier).selectedServiceInstance(serviceInstanceResponse.getServer());
         }
         return serviceInstanceResponse;
     }
 
-    private Response<ServiceInstance> getInstanceResponse(List<ServiceInstance> instances, String userId, String spaceId) {
+    private Response<ServiceInstance> getInstanceResponse(List<ServiceInstance> instances, String userId, String spaceId, String lease) {
         if (CollectionUtils.isEmpty(instances)) {
             log.info("无可用服务: {}", serviceId);
             return new EmptyResponse();
         }
 
         // 对接一致性哈希算法
-        ServiceInstance instance = consistentHashing.getInstance(instances, userId, spaceId);
+        ServiceInstance instance = consistentHashing.getInstance(instances, userId, spaceId, lease == null ? "" : lease);
         if (instance == null) {
             log.info("找不到可受理的节点: userId={}, spaceId={}", userId, spaceId);
             return new EmptyResponse();

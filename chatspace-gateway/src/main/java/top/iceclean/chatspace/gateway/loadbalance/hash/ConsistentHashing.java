@@ -20,11 +20,22 @@ public interface ConsistentHashing {
      */
     ServiceInstance getInstance(List<ServiceInstance> instances, String userId, String spaceId);
 
+    default ServiceInstance getInstance(List<ServiceInstance> instances, String userId, String spaceId, String lease) {
+        return getInstance(instances, userId, spaceId);
+    }
+    default void userRemove(String serverId, Object userId, String lease) {
+        userRemove(serverId, userId);
+    }
+
     /**
      * 服务节点增加
      * @param newInstances 新增的节点实例列表
      */
     void serverAdd(List<Instance> newInstances);
+
+    /** 用注册中心完整快照对账，允许网关重启或错过事件后恢复。 */
+    default void serverSync(List<Instance> instances) { serverAdd(instances); }
+
 
     /**
      * 服务节点移除

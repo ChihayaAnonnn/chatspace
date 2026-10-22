@@ -52,10 +52,19 @@ public class TokenFilter implements GlobalFilter {
             // 提取 token 解析用户，并与当前线程绑定
             ServerHttpRequest request = exchange.getRequest();
             String token = request.getHeaders().getFirst(HeaderConst.TOKEN);
+            String protocol = request.getHeaders().getFirst("Sec-WebSocket-Protocol");
+            if (token == null && "/space/ws/chat".equals(reqPath) && protocol != null) {
+                token = protocol.split(",")[0].trim();
+            }
             String userId = JwtUtils.parseJWT(token).getSubject();
-            request.mutate().header(HeaderConst.AUTH_USER, userId);
+            ServerHttpRequest.Builder builder = request.mutate().header(HeaderConst.AUTH_USER, userId);
+            if ("/space/ws/chat".equals(reqPath) && protocol != null) {
+                // 浏览器按标准在子协议之间加空格；兼容下游旧版空间 ID 解析器。
+                builder.headers(headers -> headers.set("Sec-WebSocket-Protocol", protocol.replaceAll("\\s*,\\s*", ",")));
+            }
+            ServerWebExchange authenticated = exchange.mutate().request(builder.build()).build();
             log.info("认证成功，用户：" + userId);
-            return chain.filter(exchange);
+            return chain.filter(authenticated);
         } catch (Exception e) {
             log.info("token 鉴权失败");
             ServerHttpResponse response = exchange.getResponse();

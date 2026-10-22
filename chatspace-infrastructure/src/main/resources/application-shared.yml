@@ -1,16 +1,14 @@
 spring:
   datasource:
-#    driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://119.91.208.25:5432/chat_space_v2?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
-#    username: iceclean2
-#    password: IceClean222
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://119.91.208.25:3306/chat_space_v2?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
-    username: root
-    password: jingyin
+    # PostgreSQL（默认本机 127.0.0.1:5432，可用 PG_HOST / PG_PORT / PG_DB / PG_USER / PG_PASSWORD 覆盖）
+    driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql://${PG_HOST:127.0.0.1}:${PG_PORT:5432}/${PG_DB:chat_space_v2}"
+    username: ${PG_USER:postgres}
+    password: ${PG_PASSWORD:postgres}
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
-      filters: [stat,wall]
+      # wall 过滤器对 PG 的 ->> 等语法支持不完整，压测期间先只开 stat
+      filters: [stat]
       web-stat-filter:
         enabled: on
         url-pattern: /*

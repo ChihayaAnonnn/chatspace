@@ -111,6 +111,22 @@ psql -v ON_ERROR_STOP=1 -d chat_space_v2 -f chatspace_pg.sql
 
 ## 4. 依赖组件与启动顺序
 
+### 4.0 一键启动依赖栈
+
+四件套已整理成 Compose 文件，含资源限制与调优参数：
+
+```bash
+cp deploy/test-stack/.env.example .env      # 可选
+docker compose -f docker-compose.test.yml up -d
+docker compose -f docker-compose.test.yml ps
+```
+
+首次启动会自动执行 `chatspace_pg.sql` 建表。连接信息、配额与注意事项见
+[`deploy/test-stack/README.md`](deploy/test-stack/README.md)。
+
+版本固定：PostgreSQL 16 / Redis 7 / RabbitMQ 3.13（已挂载延时插件）/ Nacos 2.3.0。
+Nacos 官方镜像只有 amd64，Apple Silicon 需模拟运行。
+
 ### 4.1 依赖
 
 | 组件 | realtime | message | 说明 |
